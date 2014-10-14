@@ -38,7 +38,7 @@
 <script type="text/javascript">
     function ChangeUI() {
         var lang = '<%= GetGlobalResourceObject("Common", "UILangSetCookie")%>';
-        document.cookie = "uilang=" + lang + "; path=/; expires=Mon, 01-Jan-2014 00:00:00 GMT";
+        document.cookie = "uilang=" + lang + "; path=/; expires=Mon, 01-Jan-2016 00:00:00 GMT";
         location.reload(true);
     }
 </script>
@@ -192,9 +192,9 @@
                         <div class="pane" style="display:block">
                             <ul>
                                 <li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov">Информация на сайте приёмной комиссии</a></li>
-                                <li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov/grafiki-provedeniya-olimpiad-shkolnikov-spbgu-2012-2013">Графики проведения олимпиад в 2012-2013 годах</a></li>
+                                <!--<li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov/grafiki-provedeniya-olimpiad-shkolnikov-spbgu-2012-2013">Графики проведения олимпиад в 2012-2013 годах</a></li>-->
                                 <li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov/normativnye-dokumenty">Нормативные документы</a></li>
-                                <li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov/osobennosti-provedeniya-olimpiady-shkolnikov-spbgu-2012-2013">Особенности проведения Олимпиады школьников СПбГУ – 2012-2013</a></li>
+                                <!--<li><a target="_blank" href="http://abiturient.spbu.ru/index.php/russkij/olimpiada-shkolnikov/osobennosti-provedeniya-olimpiady-shkolnikov-spbgu-2012-2013">Особенности проведения Олимпиады школьников СПбГУ – 2012-2013</a></li>-->
                             </ul>
                         </div>
                     </div>
