@@ -132,6 +132,9 @@
   <data name="PassportInfo_PassportAuthor_Message" xml:space="preserve">
     <value>Введите, кем выдан паспорт</value>
   </data>
+  <data name="PassportInfo_PassportCode_Message" xml:space="preserve">
+    <value>Введите код подразделения</value>
+  </data>
   <data name="PassportInfo_PassportDate_Message" xml:space="preserve">
     <value>Введите дату выдачи паспорта</value>
   </data>

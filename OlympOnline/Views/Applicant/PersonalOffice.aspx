@@ -55,6 +55,7 @@
             $('#PersonInfo_SecondName').blur( function() { setTimeout(CheckSecondName) });
             $('#PersonInfo_BirthDate').blur( function() { setTimeout(CheckBirthDate) });
             $('#PersonInfo_BirthPlace').blur( function() { setTimeout(CheckBirthPlace) });
+
         });
 
         function CheckForm() {
@@ -134,6 +135,7 @@
         }
         function CheckBirthDate() {
             var ret = true;
+            
             if ($('#PersonInfo_BirthDate').val() == '') {
                 ret = false;
                 $('#PersonInfo_BirthDate').addClass('input-validation-error');
@@ -145,6 +147,7 @@
             }
             return ret;
         }
+          
         function CheckBirthPlace() {
             var ret = true;
             if ($('#PersonInfo_BirthPlace').val() == '') {
@@ -243,7 +246,7 @@
 <%  }
     if (Model.Stage == 2)
     {
-%>
+%> 
         <script language="javascript" type="text/javascript" src="../../Scripts/jquery-ui-1.8.11.js"></script>
         <script language="javascript" type="text/javascript" src="../../Scripts/jquery.ui.datepicker-ru.js"></script>
         <script language="javascript" type="text/javascript">
@@ -269,15 +272,20 @@
                 $("form").submit(function () {
                     return CheckForm();
                 });
-                $('#PassportInfo_PassportType').change(CheckSeries);
+                $('#PassportInfo_PassportType').change(CheckForm);
                 $('#PassportInfo_PassportSeries').keyup( function() { setTimeout(CheckSeries); });
                 $('#PassportInfo_PassportNumber').keyup( function() { setTimeout(CheckNumber); });
                 $('#PassportInfo_PassportAuthor').keyup( function() { setTimeout(CheckAuthor); });
                 $('#PassportInfo_PassportDate').keyup( function() { setTimeout(CheckDate); });
+                $('#PassportInfo_PassportDate').keyup( function() { setTimeout(CheckDate); });
+                $('#PassportInfo_PassportCode').keyup( function() { setTimeout(CheckCode); });
+
                 $('#PassportInfo_PassportSeries').blur( function() { setTimeout(CheckSeries); });
                 $('#PassportInfo_PassportNumber').blur( function() { setTimeout(CheckNumber); });
                 $('#PassportInfo_PassportAuthor').blur( function() { setTimeout(CheckAuthor); });
                 $('#PassportInfo_PassportDate').blur( function() { setTimeout(CheckDate); });
+                $('#PassportInfo_PassportCode').blur( function() { setTimeout(CheckCode); });
+
             });
             function CheckForm() {
                 var res = true;
@@ -304,7 +312,8 @@
                 else {
                     $('#PassportInfo_PassportSeries').removeClass('input-validation-error');
                     $('#PassportInfo_PassportSeries_Message').hide();
-                    if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.text(val)) {
+                    if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.test(val)) {
+                        ret = false;
                         $('#PassportInfo_PassportSeries').addClass('input-validation-error');
                         $('#PassportInfo_PassportSeries_Message').text('Серия паспорта РФ должна состоять из 4 цифр без пробелов');
                         $('#PassportInfo_PassportSeries_Message').show();
@@ -314,6 +323,7 @@
                         $('#PassportInfo_PassportSeries_Message').hide();
                         $('#PassportInfo_PassportSeries_Message').text(PassportInfo_PassportSeries_Message);
                         if (val.length > 10) {
+                            ret = false;
                             $('#PassportInfo_PassportSeries').addClass('input-validation-error');
                             $('#PassportInfo_PassportSeries_Message').text('Слишком длинное значение');
                             $('#PassportInfo_PassportSeries_Message').show();
@@ -339,7 +349,7 @@
                 else {
                     $('#PassportInfo_PassportNumber').removeClass('input-validation-error');
                     $('#PassportInfo_PassportNumber_Message').hide();
-                    if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.text(val)) {
+                    if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.test(val)) {
                         $('#PassportInfo_PassportNumber').addClass('input-validation-error');
                         $('#PassportInfo_PassportNumber_Message').text('Номер паспорта РФ должен состоять из 6 цифр без пробелов');
                         $('#PassportInfo_PassportNumber_Message').show();
@@ -377,6 +387,7 @@
             }
             function CheckAuthor() {
                 var ret = true;
+                
                 if ($('#PassportInfo_PassportType').val() == '1' && $('#PassportInfo_PassportAuthor').val() == '') {
                     ret = false;
                     $('#PassportInfo_PassportAuthor').addClass('input-validation-error');
@@ -385,6 +396,22 @@
                 else {
                     $('#PassportInfo_PassportAuthor').removeClass('input-validation-error');
                     $('#PassportInfo_PassportAuthor_Message').hide();
+                }
+                return ret;
+            }
+            function CheckCode() {
+                var ret = true;
+                var val = $('#PassportInfo_PassportCode').val();
+                var ruPassportRegex = /^[0-9\-]+$/i;
+                if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.test(val)) {
+                    ret = false;
+                    $('#PassportInfo_PassportCode').addClass('input-validation-error');
+                    $('#PassportInfo_PassportCode_Message').text('Номер подразделения должен состоять из цифр и знака "-"');
+                    $('#PassportInfo_PassportCode_Message').show();
+                }
+                else {
+                    $('#PassportInfo_PassportCode').removeClass('input-validation-error');
+                    $('#PassportInfo_PassportCode_Message').hide();
                 }
                 return ret;
             }
@@ -411,7 +438,7 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.PassportInfo.PassportSeries, GetGlobalResourceObject("PassportInfo", "PassportSeries").ToString())%>
                             <%= Html.TextBoxFor(x => x.PassportInfo.PassportSeries)%>
-                            <br />
+                            <br /><p></p>
                             <span id="PassportInfo_PassportSeries_Message" class="Red" style="display:none">
                                 <%= GetGlobalResourceObject("PassportInfo", "PassportInfo_PassportSeries_Message").ToString()%>
                             </span>
@@ -419,7 +446,7 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.PassportInfo.PassportNumber, GetGlobalResourceObject("PassportInfo", "PassportNumber").ToString())%>
                             <%= Html.TextBoxFor(x => x.PassportInfo.PassportNumber)%>
-                            <br />
+                            <br /><p></p> 
                             <span id="PassportInfo_PassportNumber_Message" class="Red" style="display:none">
                                 <%= GetGlobalResourceObject("PassportInfo", "PassportInfo_PassportNumber_Message").ToString()%>
                             </span>
@@ -427,7 +454,7 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.PassportInfo.PassportAuthor, GetGlobalResourceObject("PassportInfo", "PassportAuthor").ToString())%>
                             <%= Html.TextBoxFor(x => x.PassportInfo.PassportAuthor)%>
-                            <br />
+                            <br /><p></p> 
                             <span id="PassportInfo_PassportAuthor_Message" class="Red" style="display:none">
                                 <%= GetGlobalResourceObject("PassportInfo", "PassportInfo_PassportAuthor_Message").ToString()%>
                             </span>
@@ -435,7 +462,7 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.PassportInfo.PassportDate, GetGlobalResourceObject("PassportInfo", "PassportDate").ToString())%>
                             <%= Html.TextBoxFor(x => x.PassportInfo.PassportDate)%>
-                            <br />
+                            <br /><p></p> 
                             <span id="PassportInfo_PassportDate_Message" class="Red" style="display:none">
                                 <%= GetGlobalResourceObject("PassportInfo", "PassportInfo_PassportDate_Message").ToString()%>
                             </span>
@@ -443,6 +470,10 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.PassportInfo.PassportCode, GetGlobalResourceObject("PassportInfo", "PassportCode").ToString())%>
                             <%= Html.TextBoxFor(x => x.PassportInfo.PassportCode)%>
+                            <br /><p></p> 
+                            <span id="PassportInfo_PassportCode_Message" class="Red" style="display:none">
+                                <%= GetGlobalResourceObject("PassportInfo", "PassportInfo_PassportCode_Message").ToString()%>
+                            </span>
                         </div>
                         <hr />
                         <div class="clearfix">
@@ -514,44 +545,99 @@
                 $('#ContactsInfo_Street').blur(function () { setTimeout(GetHouses); });
 
                 $('#ContactsInfo_MainPhone').keyup(function() { setTimeout(CheckPhone); } );
-                //$('#ContactsInfo_PostIndex').keyup(function() { setTimeout(CheckIndex); } );
+                $('#ContactsInfo_SecondPhone').keyup(function() { setTimeout(CheckSecondPhone); } );
+
+                $('#ContactsInfo_Code').keyup(function() { setTimeout(CheckIndex); } );
                 $('#ContactsInfo_City').keyup(function() { setTimeout(CheckCity); } );
-                //$('#ContactsInfo_Street').keyup(function() { setTimeout(CheckStreet); } );
+              // $('#ContactsInfo_Street').keyup(function() { setTimeout(CheckStreet); } );
                 $('#ContactsInfo_House').keyup(function() { setTimeout(CheckHouse); } );
-                
+                $('#ContactsInfo_Flat').keyup(function() { setTimeout(CheckFlat); } );
+                $('#ContactsInfo_Korpus').keyup(function() { setTimeout(CheckKorpus); } );
+
                 $('#ContactsInfo_MainPhone').blur(function() { setTimeout(CheckPhone); } );
-                //$('#ContactsInfo_PostIndex').blur(function() { setTimeout(CheckIndex); } );
+                $('#ContactsInfo_SecondPhone').blur(function() { setTimeout(CheckSecondPhone); } );
+                $('#ContactsInfo_Code').blur(function() { setTimeout(CheckIndex); } );
                 $('#ContactsInfo_City').blur(function () { setTimeout(CheckCity); });
                 
                 //$('#ContactsInfo_Street').blur(function() { setTimeout(CheckStreet); } );
                 $('#ContactsInfo_House').blur(function() { setTimeout(CheckHouse); } );
+                $('#ContactsInfo_Flat').blur(function() { setTimeout(CheckFlat); } );
+                $('#ContactsInfo_Korpus').blur(function() { setTimeout(CheckKorpus); } );
+
 
             });
         </script>
         <script type="text/javascript" language="javascript">
+            var ContactsInfo_MainPhone_Message = $('#ContactsInfo_MainPhone_Message').text();
+            var ContactsInfo_SecondPhone_Message = $('#ContactsInfo_SecondPhone_Message').text(); 
+
             function CheckPhone() {
                 var ret = true;
-                if ($('#ContactsInfo_MainPhone').val() == '') {
+                var val = $('#ContactsInfo_MainPhone').val();
+                var ruPassportRegex = /^[0-9]+$/i;
+                $('#ContactsInfo_MainPhone_Message').text('Введите основной номер');
+                if ( val == '' ) {
                     ret = false;
-                    $('#ContactsInfo_MainPhone').addClass('input-validation-error');
+                    $('#ContactsInfo_MainPhone').addClass('input-validation-error'); 
                     $('#ContactsInfo_MainPhone_Message').show();
                 }
                 else {
-                    $('#ContactsInfo_MainPhone').removeClass('input-validation-error');
-                    $('#ContactsInfo_MainPhone_Message').hide();
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_MainPhone').addClass('input-validation-error'); 
+                        $('#ContactsInfo_MainPhone_Message').text('Номер телефона должен состоять из цифр');
+                        $('#ContactsInfo_MainPhone_Message').show();
+                    }
+                    else {
+                        $('#ContactsInfo_MainPhone').removeClass('input-validation-error');
+                        $('#ContactsInfo_MainPhone_Message').hide();
+                    }
+                }
+                return ret;
+            }
+            function CheckSecondPhone() {
+                var ret = true;
+                var val = $('#ContactsInfo_SecondPhone').val();
+                var ruPassportRegex = /^[0-9]+$/i;
+                $('#ContactsInfo_SecondPhone_Message').text(ContactsInfo_SecondPhone_Message);
+                if (val == '') {
+                    $('#ContactsInfo_SecondPhone').removeClass('input-validation-error');
+                    $('#ContactsInfo_SecondPhone_Message').hide();
+                }
+                else {
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_SecondPhone').addClass('input-validation-error');
+                        $('#ContactsInfo_SecondPhone_Message').text('Номер телефона должен состоять из цифр');
+                        $('#ContactsInfo_SecondPhone_Message').show();
+                    }
+                    else {
+                        $('#ContactsInfo_SecondPhone').removeClass('input-validation-error');
+                        $('#ContactsInfo_SecondPhone_Message').hide();
+                    }
                 }
                 return ret;
             }
             function CheckIndex() {
                 var ret = true;
-                if ($('#ContactsInfo_PostIndex').val() == '') {
-                    ret = false;
-                    $('#ContactsInfo_PostIndex').addClass('input-validation-error');
-                    $('#ContactsInfo_PostIndex_Message').show();
+                var ruPassportRegex = /^[0-9]+$/i;
+                var val = $('#ContactsInfo_Code').val();
+
+                if (val == '') { 
+                    $('#ContactsInfo_Code').removeClass('input-validation-error'); 
+                    $('#ContactsInfo_Code_Message').hide();
                 }
                 else {
-                    $('#ContactsInfo_PostIndex').removeClass('input-validation-error');
-                    $('#ContactsInfo_PostIndex_Message').hide();
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_Code').addClass('input-validation-error');
+                        $('#ContactsInfo_Code_Message').text('Почтовый код должен содержать только цифры');
+                        $('#ContactsInfo_Code_Message').show();
+                    }
+                    else{
+                        $('#ContactsInfo_Code').removeClass('input-validation-error');
+                        $('#ContactsInfo_Code_Message').hide();
+                    }
                 }
                 return ret;
             }
@@ -570,7 +656,9 @@
             }
             function CheckStreet() {
                 var ret = true;
-                if ($('#ContactsInfo_Street').val() == '') {
+                var val = $('#ContactsInfo_Street').val();
+
+                if ( val == '') {
                     ret = false;
                     $('#ContactsInfo_Street').addClass('input-validation-error');
                     $('#ContactsInfo_Street_Message').show();
@@ -583,25 +671,83 @@
             }
             function CheckHouse() {
                 var ret = true;
-                if ($('#ContactsInfo_House').val() == '') {
+                var ruPassportRegex = /^[0-9\A-яа-я\-]+$/i;
+                var val = $('#ContactsInfo_House').val();
+                if ( val == '') {
                     ret = false;
                     $('#ContactsInfo_House').addClass('input-validation-error');
+                    $('#ContactsInfo_House_Message').text('Введите дом')
                     $('#ContactsInfo_House_Message').show();
                 }
                 else {
-                    $('#ContactsInfo_House').removeClass('input-validation-error');
-                    $('#ContactsInfo_House_Message').hide();
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_House').addClass('input-validation-error');
+                        $('#ContactsInfo_House_Message').text('Номер дома должен состоять из цифр и (или) букв')
+                        $('#ContactsInfo_House_Message').show();
+                    }
+                    else {
+                        $('#ContactsInfo_House').removeClass('input-validation-error');
+                        $('#ContactsInfo_House_Message').hide();
+                    }
                 }
                 return ret;
             }
-            
+             function CheckFlat() {
+                var ret = true;
+                var ruPassportRegex = /^[0-9]+$/i;
+                var val = $('#ContactsInfo_Flat').val();
+                if ( val == '') { 
+                    $('#ContactsInfo_Flat').removeClass('input-validation-error');
+                    $('#ContactsInfo_Flat_Message').hide();
+                }
+                else {
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_Flat').addClass('input-validation-error');
+                        $('#ContactsInfo_Flat_Message').text('Номер квартиры должен состоять из цифр')
+                        $('#ContactsInfo_Flat_Message').show();
+                    }
+                    else {
+                        $('#ContactsInfo_Flat').removeClass('input-validation-error');
+                        $('#ContactsInfo_Flat_Message').hide();
+                    }
+                }
+                return ret;
+            }
+            function CheckKorpus() {
+                var ret = true;
+                var ruPassportRegex = /^[0-9]+$/i;
+                var val = $('#ContactsInfo_Korpus').val();
+                if (val == '') {
+                    $('#ContactsInfo_Korpus').removeClass('input-validation-error');
+                    $('#ContactsInfo_Korpus_Message').hide();
+                }
+                else {
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#ContactsInfo_Korpus').addClass('input-validation-error');
+                        $('#ContactsInfo_Korpus_Message').text('Номер корпуса должен состоять из цифр')
+                        $('#ContactsInfo_Korpus_Message').show();
+                    }
+                    else {
+                        $('#ContactsInfo_Korpus').removeClass('input-validation-error');
+                        $('#ContactsInfo_Korpus_Message').hide();
+                    }
+                }
+                return ret;
+            }
             function CheckForm() {
                 var res = true;
                 if (!CheckPhone()) { res = false; }
-                //if (!CheckIndex) { res = false; }
+                if (!CheckIndex()) { res = false; }
+                if (!CheckSecondPhone()) { res = false; }
                 if (!CheckCity()) { res = false; }
-                if (!CheckStreet()) { res = false; }
+                //if (!CheckStreet()) { res = false; }
                 if (!CheckHouse()) { res = false; }
+                if (!CheckFlat()) { res = false; }
+                if (!CheckKorpus()) { res = false; }
+
                 return res;
             }
         </script>
@@ -651,12 +797,14 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.MainPhone, GetGlobalResourceObject("ContactsInfo", "MainPhone").ToString())%>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.MainPhone) %>
-                            <br />
+                            <br /><p></p>
                             <span id="ContactsInfo_MainPhone_Message" class="Red" style="display:none">Введите основной номер</span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.SecondPhone, GetGlobalResourceObject("ContactsInfo", "SecondPhone").ToString())%>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.SecondPhone)%>
+                            <br /><p></p>
+                            <span id="ContactsInfo_SecondPhone_Message" class="Red" style="display:none"></span>
                         </div>
                         <h3>Адрес регистрации:</h3>
                         <hr />
@@ -671,40 +819,44 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.City, GetGlobalResourceObject("ContactsInfo", "City").ToString()) %>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.City) %>
-                            <br />
+                            <br /><p></p>
                             <span id="ContactsInfo_City_Message" class="Red" style="display:none">Введите город</span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.Street, GetGlobalResourceObject("ContactsInfo", "Street").ToString()) %>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.Street)%>
-                            <br />
+                            <br /><p></p>
                             <span id="ContactsInfo_Street_Message" class="Red" style="display:none">Введите улицу</span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.House, GetGlobalResourceObject("ContactsInfo", "House").ToString()) %>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.House) %>
-                            <br />
+                            <br /><p></p>
                             <span id="ContactsInfo_House_Message" class="Red" style="display:none">Введите дом</span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.Korpus, GetGlobalResourceObject("ContactsInfo", "Korpus").ToString())%>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.Korpus) %>
+                             <br /><p></p>
+                            <span id="ContactsInfo_Korpus_Message" class="Red" style="display:none"></span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.Flat, GetGlobalResourceObject("ContactsInfo", "Flat").ToString())%>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.Flat) %>
+                            <br /><p></p>
+                            <span id="ContactsInfo_Flat_Message" class="Red" style="display:none"></span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.Code, GetGlobalResourceObject("ContactsInfo", "PostIndex").ToString())%>
                             <%= Html.TextBoxFor(x => x.ContactsInfo.Code)%>
-                            <br />
-                            <span id="Span1" class="Red" style="display:none">Введите почтовый код</span>
+                            <br /><p></p>
+                            <span id="ContactsInfo_Code_Message" class="Red" style="display:none">Введите почтовый код</span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.ContactsInfo.IsCountryside, "Проживаю в сельской местности")%>
                             <%= Html.CheckBoxFor(x => x.ContactsInfo.IsCountryside)%>
-                            <br />
-                            <span id="Span2" class="Red" style="display:none">Введите почтовый код</span>
+                            <br /><p></p>
+                            <span id="ContactsInfo_IsCountryside_Message" class="Red" style="display:none"></span>
                         </div>
                         <hr />
                         <div class="clearfix">
@@ -750,8 +902,9 @@
             function CheckForm() {
                 var ret = true;
                 if (!CheckSchoolName()) { ret = false; }
-                if (!CheckSchoolExitYear()) { ret = false; }
-                if (!CheckAttestatRegion()) { ret = false; }
+                if (!CheckSchoolNumber()) { ret = false; }
+                //if (!CheckSchoolExitYear()) { ret = false; }
+               // if (!CheckAttestatRegion()) { ret = false; }
                 return ret;
             }
             function CheckSchoolName() {
@@ -767,10 +920,36 @@
                 }
                 return ret;
             }
-            
+            function CheckSchoolNumber() {
+                var ret = true;
+                var ruPassportRegex = /^[0-9\А-Яа-я\-]+$/i;
+                var val = $('#EducationInfo_SchoolNumber').val();
+                if (val== '') { 
+                    $('#EducationInfo_SchoolNumber').removeClass('input-validation-error');
+                    $('#EducationInfo_SchoolNumber_Message').hide();
+                }
+                else {
+                    if (!ruPassportRegex.test(val)) {
+                        ret = false;
+                        $('#EducationInfo_SchoolNumber').addClass('input-validation-error');
+                        $('#EducationInfo_SchoolNumber_Message').text('Номер школы должен содержать только цифры и(или) буквы');
+                        $('#EducationInfo_SchoolNumber_Message').show();
+                    }
+                    else
+                    {
+                        $('#EducationInfo_SchoolNumber').removeClass('input-validation-error');
+                        $('#EducationInfo_SchoolNumber_Message').hide();
+                    }
+                }
+                return ret;
+            }
             $(function () {
                 $('#EducationInfo_SchoolName').keyup(function () { setTimeout(CheckSchoolName); });
                 $('#EducationInfo_SchoolName').blur(function () { setTimeout(CheckSchoolName); });
+
+                $('#EducationInfo_SchoolNumber').keyup(function () { setTimeout(CheckSchoolNumber); });
+                $('#EducationInfo_SchoolNumber').blur(function () { setTimeout(CheckSchoolNumber); });
+
                 $('#EducationInfo_CountryEducId').change(function () {
                     if ($('#EducationInfo_CountryEducId').val() != 6) {
                         $('#CountryMessage').hide();
@@ -802,12 +981,14 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.SchoolName, GetGlobalResourceObject("EducationInfo", "SchoolName").ToString())%>
                             <%= Html.TextBoxFor(x => x.EducationInfo.SchoolName)%>
-                            <br />
+                            <br /><p></p>
                             <span id="EducationInfo_SchoolName_Message" class="Red" style="display:none">Укажите название образовательного учреждения</span>
                         </div>
                         <div id="_SchoolNumber" class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.SchoolNumber, "Номер школы") %>
                             <%= Html.TextBoxFor(x => x.EducationInfo.SchoolNumber) %>
+                            <br /><p></p>
+                            <span id="EducationInfo_SchoolNumber_Message" class="Red" style="display:none"></span>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.SchoolCity, "Населённый пункт") %>
@@ -875,6 +1056,20 @@
                 $('#OtherOlymp').hide();
             }
         });
+        function CheckOlympName() {
+                var ret = true;
+                if ($('#OtherOlympUniverName').val() == '') {
+                    ret = false;
+                    $('#OtherOlympUniverName').addClass('input-validation-error');
+                    $('#OtherOlympUniverName_Message').text('Введите название олимпиады');
+                    $('#OtherOlympUniverName_Message').show();
+                }
+                else {
+                    $('#OtherOlympUniverName').removeClass('input-validation-error');
+                    $('#OtherOlympUniverName_Message').hide();
+                }
+                return ret;
+            }
         function AddVseross() {
             var SubjId = $('#OlympVserosSubject').val();
             var StageId = $('#OlympVserosStage').val();
@@ -908,24 +1103,27 @@
             }, 'json');
         }
         function AddOther() {
-            var SubjId = $('#OtherOlympSubject').val();
-            var VuzName = $('#OtherOlympUniverName').val();
-            var StatusId = $('#OtherOlympStatus').val();
-            var tblbodyText = $('#OtherOlymp tbody').html();
-            $.post('/Applicant/AddOtherOlymp', { subjectId: SubjId, vuzName: VuzName, statusId: StatusId }, function (data) {
-                if (data.IsOk) {
-                    tblbodyText += '<tr id="Oth' + data.Id + '">';
-                    tblbodyText += '<td>' + $('#OtherOlympSubject option:selected').text() + '</td>';
-                    tblbodyText += '<td>' + $('#OtherOlympUniverName').val() + '</td>';
-                    tblbodyText += '<td>' + $('#OtherOlympStatus option:selected').text() + '</td>';
-                    tblbodyText += '<td><span class="link Red" onclick="DeleteOther(\'' + data.Id + '\')">Удалить</span></td>';
-                    tblbodyText += '</tr>';
+            if (CheckOlympName()) 
+            {
+                var SubjId = $('#OtherOlympSubject').val();
+                var VuzName = $('#OtherOlympUniverName').val();
+                var StatusId = $('#OtherOlympStatus').val();
+                var tblbodyText = $('#OtherOlymp tbody').html();
+                $.post('/Applicant/AddOtherOlymp', { subjectId: SubjId, vuzName: VuzName, statusId: StatusId }, function (data) {
+                    if (data.IsOk) {
+                        tblbodyText += '<tr id="Oth' + data.Id + '">';
+                        tblbodyText += '<td>' + $('#OtherOlympSubject option:selected').text() + '</td>';
+                        tblbodyText += '<td>' + $('#OtherOlympUniverName').val() + '</td>';
+                        tblbodyText += '<td>' + $('#OtherOlympStatus option:selected').text() + '</td>';
+                        tblbodyText += '<td><span class="link Red" onclick="DeleteOther(\'' + data.Id + '\')">Удалить</span></td>';
+                        tblbodyText += '</tr>';
 
-                    cntOtherOlymp += 1;
-                    $('#OtherOlymp').show();
-                }
-                $('#OtherOlymp tbody').html(tblbodyText);
-            }, 'json');
+                        cntOtherOlymp += 1;
+                        $('#OtherOlymp').show();
+                    }
+                    $('#OtherOlymp tbody').html(tblbodyText);
+                }, 'json');
+            }
         }
         function DeleteOther(olympId) {
             $.post('/Applicant/DeleteOtherOlymp', { id: olympId }, function (data) {
@@ -1008,6 +1206,8 @@
                     <div class="clearfix">
                         <label>Название олимпиады</label>
                         <%= Html.TextBox("OtherOlympUniverName")%>
+                        <br /><p></p>
+                            <span id="OtherOlympUniverName_Message" class="Red" style="display:none"></span>
                     </div>
                     <div class="clearfix">
                         <label>Статус</label>
