@@ -798,7 +798,7 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@SubjectId", iSubjectId);
-            dic.Add("@SubjectId", Util.iOlympYear);
+            dic.Add("@Year", Util.iOlympYear);
 
             if (iOlympFormId > 0)
             {
