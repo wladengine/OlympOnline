@@ -21,7 +21,7 @@ namespace OlympOnline.Controllers
         [OutputCache(NoStore = true, Duration = 0)]
         public ActionResult NewApplication(params string[] errors)
         {
-            //if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            //if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
             //    Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
             //    return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -255,7 +255,7 @@ namespace OlympOnline.Controllers
 
         public ActionResult Index(string id)
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -375,7 +375,7 @@ namespace OlympOnline.Controllers
 
         public ActionResult GetPrint(string id)
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 

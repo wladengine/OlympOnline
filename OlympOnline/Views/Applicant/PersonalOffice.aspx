@@ -675,7 +675,7 @@
             }
             function CheckHouse() {
                 var ret = true;
-                var ruPassportRegex = /^[0-9\A-яа-я\-]+$/i;
+                var ruPassportRegex = /^[0-9\A-яа-я\/\\\_\-]+$/i;
                 var val = $('#ContactsInfo_House').val();
                 if ( val == '') {
                     ret = false;
@@ -699,7 +699,7 @@
             }
              function CheckFlat() {
                 var ret = true;
-                var ruPassportRegex = /^[0-9]+$/i;
+                var ruPassportRegex = /^[0-9\A-яа-я\/\\\_\-]+$/i;
                 var val = $('#ContactsInfo_Flat').val();
                 if ( val == '') { 
                     $('#ContactsInfo_Flat').removeClass('input-validation-error');
@@ -721,7 +721,7 @@
             }
             function CheckKorpus() {
                 var ret = true;
-                var ruPassportRegex = /^[0-9]+$/i;
+                var ruPassportRegex = /^[0-9\A-яа-я\/\\\_\-]+$/i;
                 var val = $('#ContactsInfo_Korpus').val();
                 if (val == '') {
                     $('#ContactsInfo_Korpus').removeClass('input-validation-error');

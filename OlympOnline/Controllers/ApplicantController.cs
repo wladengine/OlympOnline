@@ -22,7 +22,7 @@ namespace OlympOnline.Controllers
         // GET: /Applicant/
         public ActionResult Index(string step)
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -402,7 +402,7 @@ namespace OlympOnline.Controllers
 
         public ActionResult Main()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
