@@ -104,6 +104,22 @@
         }
     }
     </script>--%>
+     <script type="text/javascript">
+         function UpdateTeacherName() {
+             $.post('/Olymp/SaveTeacherName', { TeacherName: $('#TeacherName').val(), AppId: "<%=Model.Id.ToString("N")%>" }, function (data) {
+                 if (data.IsOk) { 
+                    $("#TeacherName_Message").text("Изменения сохранены");
+                    $("#TeacherName_Message").show();
+                 }
+                 else{
+                    $("#TeacherName_Message").text(data.ErrorMessage);
+                    $("#TeacherName_Message").show();
+                 }
+                 $('#Vseros tbody').html(tblbodyText);
+             }, 'json');
+
+         } 
+    </script>
     <script type="text/javascript" src="../../Scripts/jquery-ui-1.8.11.js"></script>
     
 <h4>Основные сведения</h4>
@@ -136,6 +152,13 @@
     </tr>
 
 </table>
+<p id = "TeacherInfo" class="message info" style="border-collapse:collapse;">
+    ФИО преподавателя, подготовившего участника:<br /> 
+    <%= Html.TextBoxFor(x => x.TeacherName, new Dictionary<string, object>() {{ "style", "min-width:500px;" }})%>
+    <input type="button" value ="Сохранить" onclick = "UpdateTeacherName()"/>
+    <br />
+    <span id="TeacherName_Message" style="display:none;"></span>
+</p>
 <br />
 <% if (Model.Stage == "Отборочный" && !Model.IsFullTime) { %>
    <div class="message info">

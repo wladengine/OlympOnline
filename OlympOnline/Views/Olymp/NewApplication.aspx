@@ -29,6 +29,8 @@
         $('#OlympPlaces').hide();
         $('#Cities').hide();
         $('#ApplicationInfo').hide();
+        $('#TeacherInfo').hide();
+
         $.post('/Olymp/GetSubjects', null, function (data) {
             if (data.IsOk) {
                 var options = '';
@@ -53,6 +55,8 @@
         $('#OlympPlaces').hide();
         $('#Cities').hide();
         $('#ApplicationInfo').hide();
+        $('#TeacherInfo').hide();
+
         $.post('/Olymp/GetOlympForms', { subjectId: $('#Subject').val() }, function (data) {
             if (data.IsOk) {
                 var options = '';
@@ -82,12 +86,14 @@
     function GetClasses() {
         $('#Errors').hide();
         $('#Classes').hide();
-        $('#OlympForms').hide();
+        //$('#OlympForms').hide();
         $('#FinishBtn').hide();
         $('#OlympPlaces').hide();
         $('#Cities').hide();
         $('#ApplicationInfo').hide();
-        $.post('/Olymp/GetSchoolClassIntervals', { subjectId: $('#Subject').val(), olympFormId: $('#OlympForm').val() }, function (data) {
+        $('#TeacherInfo').hide();
+
+        $.post('/Olymp/GetSchoolClassIntervals', { subjectId: $('#Subject').val(), olympFormId: $('#hOlympForm').val() }, function (data) {
             if (data.IsOk) {
                 var options = '';
                 for (var i = 0; i < data.List.length; i++) {
@@ -114,12 +120,13 @@
     function GetCities() {
         $('#Errors').hide();
         $('#Classes').hide();
-        $('#OlympForms').hide();
+        //$('#OlympForms').hide();
         $('#FinishBtn').hide();
         $('#OlympPlaces').hide();
         $('#Cities').hide();
         $('#ApplicationInfo').hide();
-        $.post('/Olymp/GetCities', { subjectId: $('#Subject').val(), olympFormId: $('#OlympForm').val(), schoolClassInterval: $('#Class').val() }, function (data) {
+        $('#TeacherInfo').hide();
+        $.post('/Olymp/GetCities', { subjectId: $('#Subject').val(), olympFormId: $('#hOlympForm').val(), schoolClassInterval: $('#Class').val() }, function (data) {
             if (data.IsOk) {
                 var options = '';
                 for (var i = 0; i < data.List.length; i++) {
@@ -158,6 +165,7 @@
                 options += 'Форма проведения: ' + data.Vals.Form + '<br />';
                 options += 'Город проведения: ' + data.Vals.City + '<br />';
                 $('#ApplicationInfo').html(options).show();
+                $('#TeacherInfo').show();
                 $('#FinishBtn').show();
             }
             else {
@@ -200,6 +208,12 @@
 
     <p id="ApplicationInfo" class="message info" style="border-collapse:collapse; display:none;">
     </p>
+    
+    <p id = "TeacherInfo" class="message info" style="border-collapse:collapse; display:none;">
+        ФИО преподавателя, подготовившего участника:<br />
+        <input name = "teacherName" type="text" style="width: 500px;"/>
+    </p>
+
     <p id="FinishBtn" style=" display:none;">
         <input id="Submit" type="submit" value="Подать заявление" class="button button-green"/>
     </p>

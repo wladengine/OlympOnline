@@ -80,6 +80,8 @@ namespace OlympOnline.Controllers
             string sSubjectId = Request.Form["Subject"];
             string sOlympFormId = Request.Form["hOlympForm"];
             string sSchoolClassInterval = Request.Form["hClass"];
+
+            string sTeacherName = Request.Form["teacherName"];
             //string sStageId = Request.Form["Stage"];
             //string sDate = Request.Form["Date"];
 
@@ -199,6 +201,16 @@ namespace OlympOnline.Controllers
 
             Util.AbitDB.ExecuteQuery(query, prms);
 
+            query = "INSERT INTO [Teachers] (PersonId, OlympiadId, Teacher) " +
+            "VALUES (@PersonId, @OlympiadId, @Teacher)";
+            prms = new Dictionary<string, object>()
+            {
+                { "@PersonId", PersonId },
+                { "@OlympiadId", OlympiadId },
+                { "@Teacher", sTeacherName }
+            };
+            Util.AbitDB.ExecuteQuery(query, prms);
+
             query = "SELECT [BlackBoardCode] FROM [extOlympiadInternet] WHERE Id=@Id";
             dic.Clear();
             dic.Add("@Id", OlympiadId);
@@ -274,13 +286,13 @@ namespace OlympOnline.Controllers
             };
 
             DataTable tbl =
-                Util.AbitDB.GetDataTable("SELECT Id, City, Subject, Stage, Enabled, DateOfDisable, DateOfStart, BlackBoardUrl, IsFullTime FROM [extApplication] WHERE PersonId=@PersonId AND Id=@Id", prms);
+                Util.AbitDB.GetDataTable("SELECT Id, OlympiadId, City, Subject, Stage, Enabled, DateOfDisable, DateOfStart, BlackBoardUrl, IsFullTime FROM [extApplication] WHERE PersonId=@PersonId AND Id=@Id", prms);
 
             if (tbl.Rows.Count == 0)
                 return RedirectToAction("Main", "Applicant");
 
             DataRow rw = tbl.Rows[0];
-
+            
             ExtApplicationModel model = new ExtApplicationModel()
             {
                 Id = rw.Field<Guid>("Id"),
@@ -293,6 +305,11 @@ namespace OlympOnline.Controllers
                 BlackBoardURL = rw.Field<string>("BlackBoardUrl"),
                 IsFullTime = rw.Field<bool?>("IsFullTime") ?? false
             };
+
+            int OlympiadId = rw.Field<int>("OlympiadId");
+            tbl =
+                Util.AbitDB.GetDataTable("SELECT Teacher FROM Teachers WHERE PersonId=@PersonId AND OlympiadId=@Id", new Dictionary<string, object> { { "PersonId", personId }, { "Id", OlympiadId } });
+            model.TeacherName = tbl.Rows.Count > 0 ? tbl.Rows[0].Field<string>("Teacher") : ""; 
 
             //var app = new
             //{
@@ -904,6 +921,37 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
                 return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
             }
         }
+
+        public JsonResult SaveTeacherName(string TeacherName, Guid AppId)
+        {
+            Guid PersonId;
+            if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
+                return Json(new { IsOk = false, Message = Resources.ServerMessages.AuthorizationRequired });
+
+            try
+            {
+                Dictionary<string, object> prms = new Dictionary<string, object>()
+                {
+                    { "@PersonId", PersonId }, 
+                    { "@TeacherName", TeacherName },
+                    { "@Id", AppId}
+                };
+                DataTable tbl =
+                Util.AbitDB.GetDataTable("SELECT OlympiadId FROM [extApplication] WHERE PersonId=@PersonId AND Id=@Id", prms);
+                int OlympId = tbl.Rows.Count>0? tbl.Rows[0].Field<int>("OlympiadId"):0;
+
+                string query = "Update [Teachers] set Teacher = @TeacherName where PersonId=@PersonId and OlympiadId=@OlympiadId";
+                prms.Add("OlympiadId", OlympId);
+
+                Util.AbitDB.ExecuteQuery(query, prms);
+                return Json(new { IsOk = true});
+            }
+            catch
+            {
+                return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
+            }
+        }
+
         #endregion
     }
 }

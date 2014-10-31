@@ -244,6 +244,8 @@ namespace OlympOnline.Models
         public string ComissionYaCoord { get; set; }
         public string BlackBoardURL { get; set; }
         public DateTime DateOfApply { get; set; }
+
+        public string TeacherName { get; set; }
     }
 
     //-------------------------------------------
