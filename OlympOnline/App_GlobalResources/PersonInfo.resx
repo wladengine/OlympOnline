@@ -135,6 +135,18 @@
   <data name="Nationality" xml:space="preserve">
     <value>Гражданство</value>
   </data>
+  <data name="ParentInfo_Adress" xml:space="preserve">
+    <value>Адрес проживания</value>
+  </data>
+  <data name="ParentInfo_Adress_Message" xml:space="preserve">
+    <value>Введите адрес проживания (родителя или законного представителя)</value>
+  </data>
+  <data name="ParentInfo_Name" xml:space="preserve">
+    <value>ФИО родителя или законного представителя</value>
+  </data>
+  <data name="ParentInfo_Name_Message" xml:space="preserve">
+    <value>Введите фамилию, имя, отчество родителя или законного представителя</value>
+  </data>
   <data name="PersonInfo_BirthDate_Message" xml:space="preserve">
     <value>Введите дату рождения</value>
   </data>

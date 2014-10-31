@@ -38,6 +38,7 @@ namespace OlympOnline.Controllers
 
         public static string ServerAddress { get; set; }
         public static string FilesPath { get; set; }
+        public static bool bUseRedirection { get; set; }
 
         public static Dictionary<int, string> SchoolTypesAll { get; set; }
         public static Dictionary<int, string> CountriesAll { get; set; }
@@ -51,7 +52,7 @@ namespace OlympOnline.Controllers
         {
             //abDB = new AbitDB();
             //studDB = new StudDB();
-            _abitDB = new SQLClass("Data Source=81.89.183.234;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
+            _abitDB = new SQLClass("Data Source=SRVPRIEM1;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
             _studDB = new SQLClass("Data Source=81.89.183.21;Initial Catalog=EducationUR;Integrated Security=False;User ID=faculty;Password=parolfaculty;MultipleActiveResultSets=True;");
             _offlineWorkBase = new SQLClass("Data Source=srveducation.ad.pu.ru;Initial Catalog=Priem2012;Integrated Security=false;User ID=PriemReader; Password=kukushonok");
 
@@ -81,6 +82,11 @@ namespace OlympOnline.Controllers
 
             //FilesPath = @"C:\Users\v.chikhira\Documents\Visual Studio 2010\Projects\OnlinePriem\OnlinePriem\Content\Files\";
             ServerAddress = WebConfigurationManager.AppSettings["ServerName"];//in web.config
+            bool bTmp = false;
+	        if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out bTmp))//in web.config
+	            bUseRedirection = false;
+	        else
+	            bUseRedirection = bTmp;
         }
 
         /// <summary>

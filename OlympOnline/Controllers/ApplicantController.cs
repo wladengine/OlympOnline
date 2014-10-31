@@ -144,20 +144,24 @@ namespace OlympOnline.Controllers
 
                 if (tbl.Rows[0].Field<int>("RegistrationStage") < 7)
                 {
-                    model.AddInfo = new AdditionalInfoPerson()
+                    model.ParentInfo = new ParentsPersonInfo()
                     {
-                        FZ_152Agree = false
+                        FZ_152Agree = false,
+                        ParentAddress = "",
+                        ParentName = ""
                     };
                 }
-                /*else
+                else
                 {
-                    string quer = "SELECT AddInfo, Parents, [Privileges], AbitHostel FROM Person WHERE Id=@Id";
+                    string quer = "SELECT ParentName, ParentAdress FROM Person WHERE Id=@Id";
                     DataTable tbAdd = Util.AbitDB.GetDataTable(quer, new Dictionary<string, object>() { { "@Id", PersonId } });
-                    model.AddInfo = new AdditionalInfoPerson()
+                    model.ParentInfo = new ParentsPersonInfo()
                     {
-                        FZ_152Agree = false
+                        FZ_152Agree = false,
+                        ParentName =  tbAdd.Rows[0].Field<string>("ParentName"),
+                        ParentAddress = tbAdd.Rows[0].Field<string>("ParentAdress")
                     };
-                }*/
+                } 
             }
             return View("PersonalOffice", model);
         }
@@ -345,48 +349,25 @@ namespace OlympOnline.Controllers
             }
             else if (model.Stage == 5)
             {
-               /* if (!model.AddInfo.FZ_152Agree)
-                {
-                    ModelState.AddModelError("AddInfo_FZ_152Agree", "Вы должны принять условия");
-                    return View("PersonalOffice", model);
-                }
-                */
                 Util.AbitDB.ExecuteQuery("UPDATE Person SET IsSirota=@IsSirota, IsDisabled=@IsDisabled WHERE Id=@Id",
                         new Dictionary<string, object>() { { "@IsSirota", model.AddInfo.IsSirota }, { "@IsDisabled", model.AddInfo.IsDisabled }, { "@Id", UserId } });
-                /*
-                if (iRegStage < 6)
-                    Util.AbitDB.ExecuteQuery("UPDATE Person SET RegistrationStage=@RegistrationStage WHERE Id=@Id",
-                        new Dictionary<string, object>() { { "@RegistrationStage", 100 }, { "@Id", UserId } });
-                 */   
             }
             else if (model.Stage == 6)
             {
-                //if (!model.AddInfo.FZ_152Agree)
-                //{
-                //    ModelState.AddModelError("AddInfo_FZ_152Agree", "Вы должны принять условия");
-                //    return View("PersonalOffice", model);
-                //}
-
-                //string query = string.Format("UPDATE Person SET RegistrationStage=@RegistrationStage WHERE Id=@Id");
-                //Dictionary<string, object> dic = new Dictionary<string, object>();
-                //dic.Add("@Id", UserId);
-                //dic.AddItem("@AddInfo", model.AddInfo.ExtraInfo);
-                //dic.AddItem("@Parents", model.AddInfo.ContactPerson);
-                //dic.AddItem("@Privileges", model.AddInfo.HasPrivileges);
-                //dic.AddItem("@AbitHostel", model.AddInfo.HostelAbit);
-                //if (iRegStage <= 6)
-                //    dic.Add("@RegistrationStage", 100);
-                //Util.AbitDB.ExecuteQuery(query, dic);
-
-                if (!model.AddInfo.FZ_152Agree)
+                if (!model.ParentInfo.FZ_152Agree)
                 {
                     ModelState.AddModelError("AddInfo_FZ_152Agree", "Вы должны принять условия");
                     return View("PersonalOffice", model);
                 }
-                if (iRegStage < 7)
-                    Util.AbitDB.ExecuteQuery("UPDATE Person SET RegistrationStage=@RegistrationStage WHERE Id=@Id",
-                        new Dictionary<string, object>() { { "@RegistrationStage", 100 }, { "@Id", UserId } });
 
+                string query = string.Format("UPDATE Person SET ParentName=@ParentName, ParentAdress=@ParentAdress WHERE Id=@Id");
+                Dictionary<string, object> dic = new Dictionary<string, object>();
+                dic.Add("@Id", UserId);
+                dic.AddItem("@ParentName", model.ParentInfo.ParentName);
+                dic.AddItem("@ParentAdress", model.ParentInfo.ParentAddress);
+                if (iRegStage <= 6)
+                    dic.Add("@RegistrationStage", 100);
+                Util.AbitDB.ExecuteQuery(query, dic);
 
             }
             if (model.Stage < 6)

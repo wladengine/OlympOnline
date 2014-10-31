@@ -1047,15 +1047,7 @@
         var cntOtherOlymp = parseInt('<%= Model.AddInfo.OtherOlympBase.Count %>');
         $(function () {
             $('form').submit(function () {
-                var FZAgree = $('#AddInfo_FZ_152Agree').is(':checked');
-                if (FZAgree) {
-                    $('#FZ').hide();
-                    return true;
-                }
-                else {
-                    $('#FZ').show();
-                    return false;
-                }
+                return true;
             });
             if (cntVseross == 0) {
                 $('#Vseros').hide();
@@ -1272,18 +1264,68 @@
     <script type="text/javascript">
         $(function () {
             $('form').submit(function () {
-                var FZAgree = $('#AddInfo_FZ_152Agree').is(':checked');
-                if (FZAgree) {
-                    $('#FZ').hide();
-                    return true;
+                if (CheckForm()) {
+                    var FZAgree = $('#ParentInfo_FZ_152Agree').is(':checked');
+                    if (FZAgree) {
+                        $('#FZ').hide();
+                        return true;
+                    }
+                    else {
+                        $('#FZ').show();
+                        return false;
+                    }
                 }
-                else {
-                    $('#FZ').show();
+                else
                     return false;
-                }
             });
         });
-
+        function CheckForm() {
+            var res = true;
+            if (!CheckParentName()) { res = false; }
+            if (!CheckParentAdress()) { res = false; } 
+            return res;
+        }
+    </script>
+    <script language="javascript" type="text/javascript">
+        var ParentInfo_ParentName_Message = $('#ParentInfo_ParentName_Message').text(); 
+        var regexp = /^[А-Яа-яё\-\'\s]+$/i;
+        function CheckParentName() {
+            var ret = true;
+            var val = $('#ParentInfo_ParentName').val();
+            if (val == '') {
+                ret = false;
+                $('#ParentInfo_ParentName').addClass('input-validation-error');
+                $('#ParentInfo_ParentName_Message').show();
+            }
+            else { 
+                if (!regexp.test(val)) {
+                    ret = false;
+                    $('#ParentInfo_ParentName_Message').text('Использование латинских символов не допускается');
+                    $('#ParentInfo_ParentName_Message').show();
+                    $('#ParentInfo_ParentName').addClass('input-validation-error');
+                }
+                else {
+                    $('#ParentInfo_ParentName_Message').text(ParentInfo_ParentName_Message);
+                    $('#ParentInfo_ParentName_Message').hide();
+                    $('#ParentInfo_ParentName').removeClass('input-validation-error');
+                }
+            }
+            return ret;
+        }
+        function CheckParentAdress() {
+            var ret = true;
+            var val = $('#ParentInfo_ParentAddress').val();
+            if (val == '') {
+                ret = false;
+                $('#ParentInfo_ParentAddress').addClass('input-validation-error');
+                $('#ParentInfo_ParentAddress_Message').show();
+            }
+            else {
+                    $('#ParentInfo_ParentAddress_Message').hide();
+                    $('#ParentInfo_ParentAddress').removeClass('input-validation-error');
+                }
+            return ret;
+        }
     </script>
     <div class="grid">
         <div class="wrapper">
@@ -1297,12 +1339,30 @@
                 <form class="panel form" action="../../Applicant/NextStep" method="post">
                     <%= Html.ValidationSummary() %>
                     <%= Html.HiddenFor(x => x.Stage) %>
-                   
+                     <fieldset>
+                     <h4>Сведения о родителе или законном представителе</h4>
+                        <div class="clearfix">
+                            <%= Html.LabelFor(x => x.ParentInfo.ParentName, GetGlobalResourceObject("PersonInfo", "ParentInfo_Name").ToString())%>
+                            <%= Html.TextBoxFor(x => x.ParentInfo.ParentName)%>
+                            <br /><p></p>
+                            <span id="ParentInfo_ParentName_Message" class="Red" style="display:none">
+                                <%= GetGlobalResourceObject("PersonInfo", "ParentInfo_Name_Message").ToString()%>
+                            </span>
+                        </div>
+                        <div class="clearfix">
+                            <%= Html.LabelFor(x => x.ParentInfo.ParentAddress, GetGlobalResourceObject("PersonInfo", "ParentInfo_Adress").ToString())%>
+                            <%= Html.TextBoxFor(x => x.ParentInfo.ParentAddress)%>
+                            <br /><p></p>
+                            <span id="ParentInfo_ParentAddress_Message" class="Red" style="display:none">
+                                <%= GetGlobalResourceObject("PersonInfo", "ParentInfo_Adress_Message").ToString()%>
+                            </span>
+                        </div>
+                     </fieldset>
                     <br />
                     <hr />
                     <div class="clearfix">
                         <h4>Я подтверждаю, что предоставленная мной информация корректна и достоверна. Даю согласие на обработку предоставленных персональных данных в порядке, установленном Федеральным законом от 27 июля 2006 года № 152-ФЗ «О персональных данных».</h4>
-                        <%= Html.CheckBoxFor(x => x.AddInfo.FZ_152Agree) %>
+                        <%= Html.CheckBoxFor(x => x.ParentInfo.FZ_152Agree) %>
                         <span>Подтверждаю и согласен</span>    
                     </div>
                     <span id="FZ" class="Red" style="display:none;">Вы должны принять условия</span>

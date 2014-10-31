@@ -57,6 +57,7 @@ namespace OlympOnline.Models
         public ContactsPerson ContactsInfo { get; set; }
         public EducationPerson EducationInfo { get; set; }
         public AdditionalInfoPerson AddInfo { get; set; }
+        public ParentsPersonInfo ParentInfo { get; set; }
     }
 
     public class InfoPerson
@@ -131,16 +132,21 @@ namespace OlympOnline.Models
         public List<SelectListItem> OlympVserosSubjects { get; set; }
         public List<SelectListItem> OlympVserosStages { get; set; }
         public List<SelectListItem> OlympStatuses { get; set; }
-
         public List<OtherVseross> VserossOlympBase { get; set; }
         public List<OtherOlympics> OtherOlympBase { get; set; }
-
         public List<SelectListItem> OtherOlympSubjects { get; set; }
-        [Required]
-        public bool FZ_152Agree { get; set; }
+        
 
         public bool IsDisabled { get; set; }
         public bool IsSirota { get; set; }
+    }
+
+    public class ParentsPersonInfo
+    {
+        public string ParentName { get; set; }
+        public string ParentAddress { get; set; }
+        [Required]
+        public bool FZ_152Agree { get; set; }
     }
 
     public class OtherOlympics
