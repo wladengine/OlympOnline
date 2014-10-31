@@ -18,7 +18,7 @@ namespace OlympOnline.Controllers
     {
         public ActionResult LogOn()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -120,7 +120,7 @@ namespace OlympOnline.Controllers
         
         public ActionResult LogOff()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -170,7 +170,7 @@ namespace OlympOnline.Controllers
         [OutputCache(Duration = 0, NoStore = false)]
         public ActionResult Register()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
             
@@ -322,7 +322,7 @@ namespace OlympOnline.Controllers
 
         public ActionResult ChangePassword()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
@@ -405,7 +405,7 @@ namespace OlympOnline.Controllers
 
         public ActionResult ChangePasswordSuccess()
         {
-            if (Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
+            if (Util.bUseRedirection && Request.Url.AbsoluteUri.IndexOf("https://", StringComparison.OrdinalIgnoreCase) == -1 &&
                 Request.Url.AbsoluteUri.IndexOf("localhost", StringComparison.OrdinalIgnoreCase) == -1)
                 return Redirect(Request.Url.AbsoluteUri.Replace("http://", "https://"));
 
