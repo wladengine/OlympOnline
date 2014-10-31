@@ -51,7 +51,7 @@ namespace OlympOnline.Controllers
         {
             //abDB = new AbitDB();
             //studDB = new StudDB();
-            _abitDB = new SQLClass("Data Source=81.89.183.103;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
+            _abitDB = new SQLClass("Data Source=81.89.183.234;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
             _studDB = new SQLClass("Data Source=81.89.183.21;Initial Catalog=EducationUR;Integrated Security=False;User ID=faculty;Password=parolfaculty;MultipleActiveResultSets=True;");
             _offlineWorkBase = new SQLClass("Data Source=srveducation.ad.pu.ru;Initial Catalog=Priem2012;Integrated Security=false;User ID=PriemReader; Password=kukushonok");
 

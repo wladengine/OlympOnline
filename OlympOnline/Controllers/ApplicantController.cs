@@ -44,6 +44,8 @@ namespace OlympOnline.Controllers
                 stage = tbl.Rows[0].Field<int>("RegistrationStage");
 
             PersonalOffice model = new PersonalOffice() { Lang = "ru", Stage = stage != 0 ? stage : 1, Enabled = !Util.CheckPersonReadOnlyStatus(PersonId) };
+            if (model.Stage == 2)
+                model.Stage++;
             if (model.Stage == 1)
             {
                 model.PersonInfo = new InfoPerson();
@@ -140,14 +142,14 @@ namespace OlympOnline.Controllers
                 if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
                     return RedirectToAction("LogOn", "Account");
 
-                if (tbl.Rows[0].Field<int>("RegistrationStage") < 6)
+                if (tbl.Rows[0].Field<int>("RegistrationStage") < 7)
                 {
                     model.AddInfo = new AdditionalInfoPerson()
                     {
                         FZ_152Agree = false
                     };
                 }
-                else
+                /*else
                 {
                     string quer = "SELECT AddInfo, Parents, [Privileges], AbitHostel FROM Person WHERE Id=@Id";
                     DataTable tbAdd = Util.AbitDB.GetDataTable(quer, new Dictionary<string, object>() { { "@Id", PersonId } });
@@ -155,7 +157,7 @@ namespace OlympOnline.Controllers
                     {
                         FZ_152Agree = false
                     };
-                }
+                }*/
             }
             return View("PersonalOffice", model);
         }
@@ -227,6 +229,7 @@ namespace OlympOnline.Controllers
             }
             else if (model.Stage == 2)
             {
+                /*
                 int iPassportType = 1;
                 if (!int.TryParse(model.PassportInfo.PassportType, out iPassportType))
                     iPassportType = 1;
@@ -260,6 +263,7 @@ namespace OlympOnline.Controllers
                 dic.AddItem("@RegistrationStage", iRegStage < 3 ? 3 : iRegStage);
 
                 Util.AbitDB.ExecuteQuery(query, dic);
+                */
             }
             else if (model.Stage == 3)
             {
@@ -341,19 +345,19 @@ namespace OlympOnline.Controllers
             }
             else if (model.Stage == 5)
             {
-                if (!model.AddInfo.FZ_152Agree)
+               /* if (!model.AddInfo.FZ_152Agree)
                 {
                     ModelState.AddModelError("AddInfo_FZ_152Agree", "Вы должны принять условия");
                     return View("PersonalOffice", model);
                 }
-
+                */
                 Util.AbitDB.ExecuteQuery("UPDATE Person SET IsSirota=@IsSirota, IsDisabled=@IsDisabled WHERE Id=@Id",
                         new Dictionary<string, object>() { { "@IsSirota", model.AddInfo.IsSirota }, { "@IsDisabled", model.AddInfo.IsDisabled }, { "@Id", UserId } });
-
+                /*
                 if (iRegStage < 6)
                     Util.AbitDB.ExecuteQuery("UPDATE Person SET RegistrationStage=@RegistrationStage WHERE Id=@Id",
                         new Dictionary<string, object>() { { "@RegistrationStage", 100 }, { "@Id", UserId } });
-                    
+                 */   
             }
             else if (model.Stage == 6)
             {
@@ -373,10 +377,23 @@ namespace OlympOnline.Controllers
                 //if (iRegStage <= 6)
                 //    dic.Add("@RegistrationStage", 100);
                 //Util.AbitDB.ExecuteQuery(query, dic);
+
+                if (!model.AddInfo.FZ_152Agree)
+                {
+                    ModelState.AddModelError("AddInfo_FZ_152Agree", "Вы должны принять условия");
+                    return View("PersonalOffice", model);
+                }
+                if (iRegStage < 7)
+                    Util.AbitDB.ExecuteQuery("UPDATE Person SET RegistrationStage=@RegistrationStage WHERE Id=@Id",
+                        new Dictionary<string, object>() { { "@RegistrationStage", 100 }, { "@Id", UserId } });
+
+
             }
-            if (model.Stage < 5)
+            if (model.Stage < 6)
             {
                 model.Stage++;
+                if (model.Stage == 2)
+                    model.Stage++;
                 return RedirectToAction("Index", "Applicant", new RouteValueDictionary() { { "step", model.Stage } });
             }
             else

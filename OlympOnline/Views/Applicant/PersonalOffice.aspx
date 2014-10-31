@@ -235,10 +235,12 @@
             <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <li><a href="../../Applicant?step=2">Паспорт</a></li>
+                       <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                        <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
                     </ol>
                 </div>
         </div>
@@ -484,10 +486,12 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <li><a href="../../Applicant?step=2">Паспорт</a></li>
+                        <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                        <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
                     </ol>
                 </div>
             </div>
@@ -867,10 +871,13 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <li><a href="../../Applicant?step=2">Паспорт</a></li>
+                        <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                        <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
+
                     </ol>
                 </div>
             </div>
@@ -1021,7 +1028,8 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <li><a href="../../Applicant?step=2">Паспорт</a></li>
+                        <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
@@ -1031,7 +1039,7 @@
         </div>
 <%
     }
-    if (Model.Stage == 5) //олимпиады и ФЗ 152
+    if (Model.Stage == 5) //олимпиады ( ФЗ 152 перехало в низ)
     {
 %>
     <script type="text/javascript">
@@ -1141,22 +1149,22 @@
         <div class="wrapper">
             <div class="grid_4 first">
             <% if (!Model.Enabled)
-                { %>
+               { %>
                 <div id="Message" class="message warning">
                     <span class="ui-icon ui-icon-alert"></span><%= GetGlobalResourceObject("PersonInfo", "WarningMessagePersonLocked").ToString()%>
                 </div>
             <% } %>
                 <form class="panel form" action="../../Applicant/NextStep" method="post">
-                    <%= Html.ValidationSummary() %>
-                    <%= Html.HiddenFor(x => x.Stage) %>
+                    <%= Html.ValidationSummary()%>
+                    <%= Html.HiddenFor(x => x.Stage)%>
                     <h4>Претендую на участие в программе интеллектуального попечительства детей и молодежи с  ограниченными возможностями здоровья «Талант преодоления»:</h4>
                     <div class="clearfix">
-                        <%= Html.LabelFor(x => x.AddInfo.IsDisabled, "Ребенок-инвалид") %>
-                        <%= Html.CheckBoxFor(x => x.AddInfo.IsDisabled) %>
+                        <%= Html.LabelFor(x => x.AddInfo.IsDisabled, "Ребенок-инвалид")%>
+                        <%= Html.CheckBoxFor(x => x.AddInfo.IsDisabled)%>
                     </div>
                     <div class="clearfix">
-                        <%= Html.LabelFor(x => x.AddInfo.IsSirota, "Сирота") %>
-                        <%= Html.CheckBoxFor(x => x.AddInfo.IsSirota) %>
+                        <%= Html.LabelFor(x => x.AddInfo.IsSirota, "Сирота")%>
+                        <%= Html.CheckBoxFor(x => x.AddInfo.IsSirota)%>
                     </div>
                     <h4>Участие во Всероссийской олимпиаде школьников</h4>
                     <hr />
@@ -1184,12 +1192,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <% foreach (var Ol in Model.AddInfo.VserossOlympBase.OrderBy(x=>x.Subject).ThenBy(x => x.Status))
-                            { %>
+                        <% foreach (var Ol in Model.AddInfo.VserossOlympBase.OrderBy(x => x.Subject).ThenBy(x => x.Status))
+                           { %>
                             <tr id="<%= "Vs" + Ol.Id.ToString("N") %>">
-                               <td><%= Ol.Subject %></td>
-                               <td><%= Ol.Level %></td>
-                               <td><%= Ol.Status %></td>
+                               <td><%= Ol.Subject%></td>
+                               <td><%= Ol.Level%></td>
+                               <td><%= Ol.Status%></td>
                                <td><span class="link Red" onclick="DeleteVseross('<%= Ol.Id.ToString("N") %>')">Удалить</span></td>
                             </tr>
                         <% } %>
@@ -1225,17 +1233,71 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <% foreach (var Ol in Model.AddInfo.OtherOlympBase.OrderBy(x=>x.Subject).ThenBy(x => x.Status))
-                            { %>
+                        <% foreach (var Ol in Model.AddInfo.OtherOlympBase.OrderBy(x => x.Subject).ThenBy(x => x.Status))
+                           { %>
                             <tr id="<%= "Oth" + Ol.Id.ToString("N") %>">
-                               <td><%= Ol.Subject %></td>
-                               <td><%= Ol.VuzName %></td>
-                               <td><%= Ol.Status %></td>
+                               <td><%= Ol.Subject%></td>
+                               <td><%= Ol.VuzName%></td>
+                               <td><%= Ol.Status%></td>
                                <td><span class="link Red" onclick="DeleteOther('<%= Ol.Id.ToString("N") %>')">Удалить</span></td>
                             </tr>
                         <% } %>
                         </tbody>
                     </table>
+                    <br />
+                    <hr />
+                    <div class="clearfix">
+                        <input id="Submit4" type="submit" class="button button-green" value="<%= GetGlobalResourceObject("PersonInfo", "ButtonSubmitText").ToString()%>" />
+                    </div>
+                </form>
+            </div>
+            <div class="grid_2">
+                <ol>
+                    <li><a href="../../Applicant?step=1">Личные данные</a></li>
+                    <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
+                    <li><a href="../../Applicant?step=3">Контактная информация</a></li>
+                    <li><a href="../../Applicant?step=4">Образование</a></li>
+                    <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                    <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+<%
+    }
+    if (Model.Stage == 6) //сведения о родителе или законном представителе ФЗ 152
+    {
+%>
+    <script type="text/javascript">
+        $(function () {
+            $('form').submit(function () {
+                var FZAgree = $('#AddInfo_FZ_152Agree').is(':checked');
+                if (FZAgree) {
+                    $('#FZ').hide();
+                    return true;
+                }
+                else {
+                    $('#FZ').show();
+                    return false;
+                }
+            });
+        });
+
+    </script>
+    <div class="grid">
+        <div class="wrapper">
+            <div class="grid_4 first">
+            <% if (!Model.Enabled)
+                { %>
+                <div id="Message" class="message warning">
+                    <span class="ui-icon ui-icon-alert"></span><%= GetGlobalResourceObject("PersonInfo", "WarningMessagePersonLocked").ToString()%>
+                </div>
+            <% } %>
+                <form class="panel form" action="../../Applicant/NextStep" method="post">
+                    <%= Html.ValidationSummary() %>
+                    <%= Html.HiddenFor(x => x.Stage) %>
+                   
                     <br />
                     <hr />
                     <div class="clearfix">
@@ -1253,15 +1315,17 @@
             <div class="grid_2">
                 <ol>
                     <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                    <li><a href="../../Applicant?step=2">Паспорт</a></li>
+                    <% if (1 == 2)
+                       { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                     <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                     <li><a href="../../Applicant?step=4">Образование</a></li>
                     <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                    <li><a href="../../Applicant?step=6">Сведения о родителях</a></li> 
                 </ol>
             </div>
         </div>
     </div>
 <%
     }
-%>
+%>  
 </asp:Content>
