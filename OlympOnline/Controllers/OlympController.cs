@@ -434,9 +434,10 @@ namespace OlympOnline.Controllers
             if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
                 return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
 
-            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=2013 ORDER BY Subject";
+            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=@Year ORDER BY Subject";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
+            dic.Add("@Year", Util.iOlympYear);
             try
             {
                 DataTable tbl = Util.AbitDB.GetDataTable(query, dic);
@@ -470,7 +471,7 @@ namespace OlympOnline.Controllers
             dic.Add("@PersonId", PersonId);
             dic.Add("@CityId", iCityId);
             dic.Add("@SubjectId", iSubjectId);
-
+            dic.Add("@Year", Util.iOlympYear);
             try
             {
                 DataTable tbl = Util.AbitDB.GetDataTable(query, dic);
@@ -589,7 +590,7 @@ FROM extOlympiadInternet WHERE extOlympiadInternet.Id NOT IN (SELECT OlympiadId 
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@SubjectId", iSubjectId);
-            dic.Add("@Year", 2013);
+            dic.Add("@Year", Util.iOlympYear);
 
             try
             {
@@ -626,7 +627,7 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@SubjectId", iSubjectId);
-            dic.Add("@Year", 2013);
+            dic.Add("@Year", Util.iOlympYear);
             if (iOlympFormId > 0)
             {
                 query += " AND OlympFormId=@OlympFormId ";
@@ -677,7 +678,7 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@SubjectId", iSubjectId);
-            dic.Add("@Year", 2013);
+            dic.Add("@Year", Util.iOlympYear);
             if (iOlympFormId > 0)
             {
                 query += " AND OlympFormId=@OlympFormId ";
@@ -792,11 +793,12 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
             string query = @"SELECT extOlympiad.Subject, ISNULL(extOlympiad.SchoolClassInterval, 'нет') AS SchoolClassInterval, ISNULL(extOlympiad.OlympForm, 'нет') AS OlympForm, " +
                 " extOlympiad.City, extOlympiad.DateOfStart, extOlympiad.DateOfClose, extOlympiad.IsOpen " +
                 " FROM extOlympiad INNER JOIN SchoolClassInSchoolClassInterval ON SchoolClassInSchoolClassInterval.SchoolClassIntervalId = extOlympiad.SchoolClassIntervalId" +
-                " WHERE extOlympiad.Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND extOlympiad.SubjectId=@SubjectId" +
+                " WHERE extOlympiad.Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND extOlympiad.SubjectId=@SubjectId AND extOlympiad.Year=@Year " +
                 " AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM Person WHERE Id=@PersonId)";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@SubjectId", iSubjectId);
+            dic.Add("@SubjectId", Util.iOlympYear);
 
             if (iOlympFormId > 0)
             {

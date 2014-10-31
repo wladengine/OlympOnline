@@ -23,6 +23,10 @@ namespace OlympOnline.Controllers
         private static SQLClass _studDB;
         private static SQLClass _offlineWorkBase;
 
+        public static int iOlympYear { get; private set; }
+        public static string sOlympYear { get; private set; }
+        public static bool bUseRedirection { get; private set; }
+
         /// <summary>
         /// ADO-Powered
         /// </summary>
@@ -51,7 +55,7 @@ namespace OlympOnline.Controllers
         {
             //abDB = new AbitDB();
             //studDB = new StudDB();
-            _abitDB = new SQLClass("Data Source=81.89.183.234;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
+            _abitDB = new SQLClass("Data Source=SRVPRIEM1;Initial Catalog=OlympOnline;Integrated Security=False;User ID=OnlinePriemUser;Password=AllYourBaseAreBelongToUs666+;MultipleActiveResultSets=True;");
             _studDB = new SQLClass("Data Source=81.89.183.21;Initial Catalog=EducationUR;Integrated Security=False;User ID=faculty;Password=parolfaculty;MultipleActiveResultSets=True;");
             _offlineWorkBase = new SQLClass("Data Source=srveducation.ad.pu.ru;Initial Catalog=Priem2012;Integrated Security=false;User ID=PriemReader; Password=kukushonok");
 
@@ -81,6 +85,20 @@ namespace OlympOnline.Controllers
 
             //FilesPath = @"C:\Users\v.chikhira\Documents\Visual Studio 2010\Projects\OnlinePriem\OnlinePriem\Content\Files\";
             ServerAddress = WebConfigurationManager.AppSettings["ServerName"];//in web.config
+
+            bool tmp = false;
+            if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out tmp))
+                bUseRedirection = false;
+            else
+                bUseRedirection = tmp;
+
+            sOlympYear = WebConfigurationManager.AppSettings["OlympYear"];
+
+            int iTmp = 0;
+            if (!int.TryParse(sOlympYear, out iTmp))
+                iOlympYear = DateTime.Now.AddMonths(5).Year;
+            else
+                iOlympYear = iTmp;
         }
 
         /// <summary>
