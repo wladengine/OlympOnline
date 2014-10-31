@@ -42,7 +42,6 @@ namespace OlympOnline.Controllers
 
         public static string ServerAddress { get; set; }
         public static string FilesPath { get; set; }
-        public static bool bUseRedirection { get; set; }
 
         public static Dictionary<int, string> SchoolTypesAll { get; set; }
         public static Dictionary<int, string> CountriesAll { get; set; }
@@ -86,20 +85,11 @@ namespace OlympOnline.Controllers
 
             //FilesPath = @"C:\Users\v.chikhira\Documents\Visual Studio 2010\Projects\OnlinePriem\OnlinePriem\Content\Files\";
             ServerAddress = WebConfigurationManager.AppSettings["ServerName"];//in web.config
-<<<<<<< HEAD
             bool bTmp = false;
 	        if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out bTmp))//in web.config
 	            bUseRedirection = false;
 	        else
 	            bUseRedirection = bTmp;
-=======
-
-            bool tmp = false;
-            if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out tmp))
-                bUseRedirection = false;
-            else
-                bUseRedirection = tmp;
-
             sOlympYear = WebConfigurationManager.AppSettings["OlympYear"];
 
             int iTmp = 0;
@@ -107,7 +97,6 @@ namespace OlympOnline.Controllers
                 iOlympYear = DateTime.Now.AddMonths(5).Year;
             else
                 iOlympYear = iTmp;
->>>>>>> 891742cf9ae466060a96851e13af10be0ec5b82a
         }
 
         /// <summary>
