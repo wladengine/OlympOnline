@@ -23,6 +23,10 @@ namespace OlympOnline.Controllers
         private static SQLClass _studDB;
         private static SQLClass _offlineWorkBase;
 
+        public static int iOlympYear { get; private set; }
+        public static string sOlympYear { get; private set; }
+        public static bool bUseRedirection { get; private set; }
+
         /// <summary>
         /// ADO-Powered
         /// </summary>
@@ -82,11 +86,28 @@ namespace OlympOnline.Controllers
 
             //FilesPath = @"C:\Users\v.chikhira\Documents\Visual Studio 2010\Projects\OnlinePriem\OnlinePriem\Content\Files\";
             ServerAddress = WebConfigurationManager.AppSettings["ServerName"];//in web.config
+<<<<<<< HEAD
             bool bTmp = false;
 	        if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out bTmp))//in web.config
 	            bUseRedirection = false;
 	        else
 	            bUseRedirection = bTmp;
+=======
+
+            bool tmp = false;
+            if (!bool.TryParse(WebConfigurationManager.AppSettings["bUseRedirection"], out tmp))
+                bUseRedirection = false;
+            else
+                bUseRedirection = tmp;
+
+            sOlympYear = WebConfigurationManager.AppSettings["OlympYear"];
+
+            int iTmp = 0;
+            if (!int.TryParse(sOlympYear, out iTmp))
+                iOlympYear = DateTime.Now.AddMonths(5).Year;
+            else
+                iOlympYear = iTmp;
+>>>>>>> 891742cf9ae466060a96851e13af10be0ec5b82a
         }
 
         /// <summary>
