@@ -269,9 +269,20 @@ namespace OlympOnline.Controllers
         {
             MemoryStream ms = new MemoryStream();
 
-            string query = @"SELECT Surname, Name, SecondName, BirthDate, SchoolName, SchoolNum, SchoolClass, Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
-[Email], Phone, extPerson.Barcode, extApplication.City AS OlympCity, extApplication.Subject, extApplication.Date AS OlympDate, extApplication.Stage, PassportSeries, PassportNumber, PassportDate 
-FROM extApplication INNER JOIN extPerson ON extPerson.Id = extApplication.PersonId WHERE extApplication.Id=@Id";
+            string query = @"SELECT 
+Surname, Name, SecondName, BirthDate, SchoolName, SchoolNum, 
+SchoolClass, Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
+[Email], Phone, extPerson.Barcode, extApplication.City AS OlympCity, 
+extApplication.Subject, extApplication.Date AS OlympDate,
+extApplication.Stage, 
+--PassportSeries, PassportNumber, PassportDate,
+ParentName, ParentAdress,
+IsSirota, IsDisabled, 
+Teacher
+FROM extApplication 
+INNER JOIN extPerson ON extPerson.Id = extApplication.PersonId 
+LEFT JOIN Teachers ON extApplication.PersonId = Teachers.PersonId and extApplication.OlympiadId  = Teachers.OlympiadId
+WHERE extApplication.Id=@Id";
 
             Dictionary<string, object> sl = new Dictionary<string, object>();
             sl.Add("@Id", appId);
@@ -303,13 +314,18 @@ FROM extApplication INNER JOIN extPerson ON extPerson.Id = extApplication.Person
                 Stage = rw["Stage"].ToString(),
                 Phone = rw["Phone"].ToString(),
                 Email = rw["Email"].ToString(),
-                PassportSeries = rw["PassportSeries"].ToString(),
-                PassportNumber = rw["PassportNumber"].ToString(),
-                PassportDate = rw.Field<DateTime>("PassportDate"),
+               // PassportSeries = rw["PassportSeries"].ToString(),
+               // PassportNumber = rw["PassportNumber"].ToString(),
+               // PassportDate = rw.Field<DateTime>("PassportDate"),
                 IsCountryside = rw.Field<bool>("IsCountryside"),
+                TeacherName = rw.Field<string>("Teacher"),
+                ParentName = rw.Field<string>("ParentName"),
+                ParentAdress = rw.Field<string>("ParentAdress"),
+                IsSirota = rw.Field<bool>("IsSirota"),
+                IsDisabled = rw.Field<bool>("IsDisabled")
             };
 
-            string dotName = "Application.pdf";
+            string dotName = "Application2014.pdf";
 
             byte[] templateBytes;
             using (FileStream fs = new FileStream(dirPath + dotName, FileMode.Open, FileAccess.Read))
@@ -334,22 +350,36 @@ PdfWriter.AllowPrinting);
             img.SetAbsolutePosition(360, 795);
             cb.AddImage(img);
 
-            string Surname = GetDoubleSpacedString(person.Surname.ToUpper());
-            string Name = GetDoubleSpacedString(person.Name.ToUpper());
-            string SecondName = GetDoubleSpacedString(person.SecondName.ToUpper());
-
+            string Surname = GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper();// (person.Surname.ToUpper());
+            string Name = GetDoubleSpacedString(person.Name.ToUpper());//person.Name.ToUpper();
+            string SecondName = GetDoubleSpacedString(person.SecondName.ToUpper());//person.SecondName.ToUpper();//GetDoubleSpacedString(person.SecondName.ToUpper());
             acrFlds.SetField("Surname", Surname);
+
+           /* for (int i = 0; i < Surname.Length; i++)
+            {
+                string newStr = Surname.Substring(i, 1);
+                string fiels = "Surname" + i.ToString();
+                acrFlds.SetField(fiels, newStr);
+            }*
+           /* for (int i = 0; i < Name.Length; i++)
+            {
+                acrFlds.SetField("Name" + i.ToString() , Name[i].ToString());
+            }*/
             acrFlds.SetField("Name", Name);
+            /*for (int i = 0; i < SecondName.Length; i++)
+            {
+                acrFlds.SetField("SecondName" + i.ToString() , SecondName[i].ToString());
+            }*/
             acrFlds.SetField("SecondName", SecondName);
 
-            acrFlds.SetField("Surname_1", Surname);
+            /*acrFlds.SetField("Surname_1", Surname);
             acrFlds.SetField("Name_1", Name);
             acrFlds.SetField("SecondName_1", SecondName);
-
+            */
             string BirthDate_Day = GetSpacedString(person.BirthDate.Day.ToString("D2"));
             string BirthDate_Year = GetSpacedString(person.BirthDate.Year.ToString());
             string BirthDate_Month = GetSpacedString(person.BirthDate.Month.ToString("D2"));
-            
+
             acrFlds.SetField("BirthDate_Day", BirthDate_Day);
             acrFlds.SetField("BirthDate_Year", BirthDate_Year);
             acrFlds.SetField("BirthDate_Month", BirthDate_Month);
@@ -361,6 +391,11 @@ PdfWriter.AllowPrinting);
                 + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
             acrFlds.SetField("Address", address);
             acrFlds.SetField("Address_1", address);
+
+            acrFlds.SetField("ParentName", person.ParentName);
+            acrFlds.SetField("ParentAdress", person.ParentAdress);
+            acrFlds.SetField("PersonFIO", Surname + " " + Name + " " + SecondName);
+            acrFlds.SetField("PersonAdress", address);
 
             acrFlds.SetField("SchoolName", person.SchoolName);
             acrFlds.SetField("SchoolNum", person.SchoolNum);
@@ -380,7 +415,7 @@ PdfWriter.AllowPrinting);
             acrFlds.SetField("Phone_1", GetDoubleSpacedString(person.Phone));
             acrFlds.SetField("Email_1", person.Email);
 
-            acrFlds.SetField("Passport", GetDoubleSpacedString(person.PassportSeries + " " + person.PassportNumber));
+           /* acrFlds.SetField("Passport", GetDoubleSpacedString(person.PassportSeries + " " + person.PassportNumber));
             acrFlds.SetField("Passport_1", GetDoubleSpacedString(person.PassportSeries + " " + person.PassportNumber));
 
             string PassportDate_Day = GetSpacedString(person.PassportDate.Day.ToString("D2"));
@@ -392,15 +427,25 @@ PdfWriter.AllowPrinting);
 
             acrFlds.SetField("PassportDate_Day_1", PassportDate_Day);
             acrFlds.SetField("PassportDate_Month_1", PassportDate_Month);
-            acrFlds.SetField("PassportDate_Year_1", PassportDate_Year);
+            acrFlds.SetField("PassportDate_Year_1", PassportDate_Year);*/
 
 
             if (person.IsCountryside)
             {
                 acrFlds.SetField("chbIsCountryside", "1");
-                acrFlds.SetField("chbIsCountryside_1", "1");
+               // acrFlds.SetField("chbIsCountryside_1", "1");
             }
 
+            if (person.IsSirota)
+            {
+                acrFlds.SetField("IsSirota", "1");
+
+            }
+            if (person.IsDisabled)
+            {
+                acrFlds.SetField("IsDisabled", "1");
+
+            }
             pdfStm.FormFlattening = true;
             pdfStm.Close();
             pdfRd.Close();

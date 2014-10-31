@@ -877,7 +877,6 @@
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
                         <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
-
                     </ol>
                 </div>
             </div>
@@ -1033,6 +1032,7 @@
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
                         <li><a href="../../Applicant?step=5">Доп. сведения</a></li>
+                        <li><a href="../../Applicant?step=6">Сведения о родителях</a></li>
                     </ol>
                 </div>
             </div>
