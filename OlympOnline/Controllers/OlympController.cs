@@ -95,10 +95,11 @@ namespace OlympOnline.Controllers
             //int iStageId = Util.ParseSafe(sStageId);
 
             //------------------Проверка на дублирование заявлений---------------------------------------------------------------------
-            string query = "SELECT Id FROM Olympiad WHERE SubjectId=@SubjectId AND Year=2013 AND StageId=@StageId AND IsOpen=1 ";// AND CityId=@CityId AND [Date]=@Date";
+            string query = "SELECT Id FROM Olympiad WHERE SubjectId=@SubjectId AND Year=@Year AND StageId=@StageId AND IsOpen=1 ";// AND CityId=@CityId AND [Date]=@Date";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@SubjectId", iSubjectId);
             dic.Add("@StageId", 1);
+            dic.Add("@Year", Util.iOlympYear);
             
             if (iOlympFormId != 0)
             {
@@ -144,8 +145,9 @@ namespace OlympOnline.Controllers
 
             //список заявлений на олимпиады есть, теперь проверим, нет ли в списке занятых олимпиад из других городов
             dic.Clear();
-            query = "SELECT Id FROM extOlympiad WHERE SubjectId=@SubjectId AND Year=2013 ";
+            query = "SELECT Id FROM extOlympiad WHERE SubjectId=@SubjectId AND Year=@Year";
             dic.Add("@SubjectId", iSubjectId);
+            dic.Add("@Year", Util.iOlympYear);
             if (iOlympFormId != 0)
             {
                 query += " AND OlympFormId=@OlympFormId";
@@ -169,8 +171,9 @@ namespace OlympOnline.Controllers
 
             //список заявлений на олимпиады есть, теперь проверим, нет ли в списке занятых олимпиад в других формах проведения
             dic.Clear();
-            query = "SELECT Id FROM extOlympiad WHERE SubjectId=@SubjectId AND Year=2013 ";
+            query = "SELECT Id FROM extOlympiad WHERE SubjectId=@SubjectId AND Year=@Year";
             dic.Add("@SubjectId", iSubjectId);
+            dic.Add("@Year", Util.iOlympYear);
             if (iSchoolClassInterval > 0)
             {
                 query += " AND SchoolClassIntervalId=@SchoolClassIntervalId ";
@@ -215,53 +218,20 @@ namespace OlympOnline.Controllers
             dic.Clear();
             dic.Add("@Id", OlympiadId);
             string bbcode = Util.AbitDB.GetStringValue(query, dic);
-
-            if (!string.IsNullOrEmpty(bbcode))
+            
+            query = "SELECT [City] FROM [extOlympiadInternet] WHERE Id=@Id";
+            string cityName = Util.AbitDB.GetStringValue(query, dic);
+            
+            if (!string.IsNullOrEmpty(bbcode) || cityName.IndexOf("Интернет-олимпиада", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                query = "INSERT INTO OlympInBBUser (Id, BBUserId, BBCourseCode, IsImported) VALUES (NEWID(), @UserId, @BBCode, 0)";
+                query = "INSERT INTO OlympInBBUser (Id, BBUserId, BBCourseCode, OlympiadId, IsImported) VALUES (NEWID(), @UserId, @BBCode, @OlympiadId, 0)";
                 dic.Clear();
                 dic.Add("@UserId", PersonId);
                 dic.Add("@BBCode", bbcode);
+                dic.Add("@OlympiadId", OlympiadId);
                 Util.AbitDB.ExecuteQuery(query, dic);
             }
-
-            //query = "SELECT Person.Surname, Person.Name, Person.SecondName, Entry.LicenseProgramCode, Entry.LicenseProgramName, Entry.ObrazProgramName " +
-            //    " FROM [Application] INNER JOIN Person ON Person.Id=[Application].PersonId " +
-            //    " INNER JOIN Entry ON Application.EntryId=Entry.Id WHERE Application.Id=@AppId";
-            //DataTable Tbl = Util.AbitDB.GetDataTable(query, new Dictionary<string, object>() { { "@AppId", appId } });
-            //var fileInfo =
-            //    (from DataRow rw in Tbl.Rows
-            //     select new
-            //     {
-            //         Surname = rw.Field<string>("Surname"),
-            //         Name = rw.Field<string>("Name"),
-            //         SecondName = rw.Field<string>("SecondName"),
-            //         ProfessionCode = rw.Field<string>("LicenseProgramCode"),
-            //         Profession = rw.Field<string>("LicenseProgramName"),
-            //         ObrazProgram = rw.Field<string>("ObrazProgramName")
-            //     }).FirstOrDefault();
-            //
-            //if (iEntry == 2)
-            //{
-            //    byte[] pdfData = PDFUtils.GetApplicationPDF(appId, Server.MapPath("~/Templates/"));
-            //    DateTime dateTime = DateTime.Now;
-
-            //    query = "INSERT INTO ApplicationFile (Id, ApplicationId, FileName, FileExtention, FileData, FileSize, IsReadOnly, LoadDate, Comment, MimeType) " +
-            //        " VALUES (@Id, @PersonId, @FileName, @FileExtention, @FileData, @FileSize, @IsReadOnly, @LoadDate, @Comment, @MimeType)";
-            //    prms.Clear();
-            //    prms.Add("@Id", Guid.NewGuid());
-            //    prms.Add("@PersonId", appId);
-            //    prms.Add("@FileName", fileInfo.Surname + " " + fileInfo.Name.FirstOrDefault() + " - Заявление [" + dateTime.ToString("dd.MM.yyyy") + "].pdf");
-            //    prms.Add("@FileExtention", ".pdf");
-            //    prms.Add("@FileData", pdfData);
-            //    prms.Add("@FileSize", pdfData.Length);
-            //    prms.Add("@IsReadOnly", true);
-            //    prms.Add("@LoadDate", dateTime);
-            //    prms.Add("@Comment", "Заявление на направление (" + fileInfo.ProfessionCode + ") " + fileInfo.Profession + ", образовательная программа \""
-            //        + fileInfo.ObrazProgram + "\", от " + dateTime.ToShortDateString());
-            //    prms.Add("@MimeType", "[Application]/pdf");
-            //    Util.AbitDB.ExecuteQuery(query, prms);
-            //}
+            
             return RedirectToAction("Index", "Olymp", new RouteValueDictionary() { { "id", appId.ToString("N") } });
         }
 

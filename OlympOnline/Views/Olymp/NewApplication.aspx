@@ -182,7 +182,7 @@
     <p class="message warning">Обращаем ваше внимание, что в соответствии с п.7.3 Регламента проведения олимпиады школьников СПбГУ в 2014/2015 учебном году, допускается однократное участие в олимпиаде по соответствующему предмету.</p>
     <p id="pCities">
         <span>Выберите предмет олимпиады</span><br />
-        <%= Html.DropDownList("Subject", Model.Subjects, new Dictionary<string, object>() { { "onchange", "GetOlympForms()" }, { "size", "12" }, { "style", "min-width:500px;" } })%>
+        <%= Html.DropDownList("Subject", Model.Subjects, new Dictionary<string, object>() { { "onchange", "GetOlympForms()" }, { "size", "12" }, { "style", "min-width:500px;" } }) %>
     </p>
     
     <%--<p id="Subjects" style="border-collapse:collapse; display:none;">
