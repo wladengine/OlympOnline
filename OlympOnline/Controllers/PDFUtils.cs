@@ -350,42 +350,28 @@ PdfWriter.AllowPrinting);
             img.SetAbsolutePosition(360, 795);
             cb.AddImage(img);
 
-            string Surname = GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper();// (person.Surname.ToUpper());
-            string Name = GetDoubleSpacedString(person.Name.ToUpper());//person.Name.ToUpper();
-            string SecondName = GetDoubleSpacedString(person.SecondName.ToUpper());//person.SecondName.ToUpper();//GetDoubleSpacedString(person.SecondName.ToUpper());
-            acrFlds.SetField("Surname", Surname);
+            string Surname = person.Surname.ToUpper();//GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper(); 
+            string Name = person.Name.ToUpper();//; GetDoubleSpacedString(person.Name.ToUpper())
+            string SecondName = person.SecondName.ToUpper(); //person.SecondName.ToUpper();//GetDoubleSpacedString(person.SecondName.ToUpper());
 
-           /* for (int i = 0; i < Surname.Length; i++)
-            {
-                string newStr = Surname.Substring(i, 1);
-                string fiels = "Surname" + i.ToString();
-                acrFlds.SetField(fiels, newStr);
-            }*
-           /* for (int i = 0; i < Name.Length; i++)
-            {
+            for (int i = 0; i < Surname.Length; i++)
+                acrFlds.SetField("Surname" + i.ToString(), Surname[i].ToString());
+            for (int i = 0; i < Name.Length; i++)
                 acrFlds.SetField("Name" + i.ToString() , Name[i].ToString());
-            }*/
-            acrFlds.SetField("Name", Name);
-            /*for (int i = 0; i < SecondName.Length; i++)
-            {
+            
+            for (int i = 0; i < SecondName.Length; i++)
                 acrFlds.SetField("SecondName" + i.ToString() , SecondName[i].ToString());
-            }*/
-            acrFlds.SetField("SecondName", SecondName);
 
-            /*acrFlds.SetField("Surname_1", Surname);
-            acrFlds.SetField("Name_1", Name);
-            acrFlds.SetField("SecondName_1", SecondName);
-            */
-            string BirthDate_Day = GetSpacedString(person.BirthDate.Day.ToString("D2"));
-            string BirthDate_Year = GetSpacedString(person.BirthDate.Year.ToString());
-            string BirthDate_Month = GetSpacedString(person.BirthDate.Month.ToString("D2"));
+            string BirthDate_Day = person.BirthDate.Day.ToString("D2");// GetSpacedString(person.BirthDate.Day.ToString("D2"));
+            string BirthDate_Year = person.BirthDate.Year.ToString();// GetSpacedString(person.BirthDate.Year.ToString());
+            string BirthDate_Month = person.BirthDate.Month.ToString("D2");// GetSpacedString(person.BirthDate.Month.ToString("D2"));
 
-            acrFlds.SetField("BirthDate_Day", BirthDate_Day);
-            acrFlds.SetField("BirthDate_Year", BirthDate_Year);
-            acrFlds.SetField("BirthDate_Month", BirthDate_Month);
-            acrFlds.SetField("BirthDate_Day_1", BirthDate_Day);
-            acrFlds.SetField("BirthDate_Year_1", BirthDate_Year);
-            acrFlds.SetField("BirthDate_Month_1", BirthDate_Month);
+            for (int i = 0; i < BirthDate_Day.Length; i++)
+                acrFlds.SetField("BirthDate_Day" + i.ToString(), BirthDate_Day[i].ToString());
+            for (int i = 0; i < BirthDate_Year.Length; i++)
+                acrFlds.SetField("BirthDate_Year"+i.ToString(), BirthDate_Year[i].ToString());
+            for (int i = 0; i < BirthDate_Month.Length; i++)
+                acrFlds.SetField("BirthDate_Month" + i.ToString(), BirthDate_Month[i].ToString());
 
             string address = person.Code + (string.IsNullOrEmpty(person.Code) ? "" : " ") + person.City + " " + person.Street.Replace("улица", "ул.").Replace("проспект", "пр.")
                 + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
@@ -393,59 +379,36 @@ PdfWriter.AllowPrinting);
             acrFlds.SetField("Address_1", address);
 
             acrFlds.SetField("ParentName", person.ParentName);
-            acrFlds.SetField("ParentAdress", person.ParentAdress);
-            acrFlds.SetField("PersonFIO", Surname + " " + Name + " " + SecondName);
-            acrFlds.SetField("PersonAdress", address);
+            acrFlds.SetField("ParentAdress1", person.ParentAdress);
+
+            acrFlds.SetField("PersonName", Surname + " " + Name + " " + SecondName);
+            acrFlds.SetField("PersonAdress1", address);
 
             acrFlds.SetField("SchoolName", person.SchoolName);
             acrFlds.SetField("SchoolNum", person.SchoolNum);
-            acrFlds.SetField("SchoolClass", person.SchoolClass);
-            acrFlds.SetField("SchoolName_1", person.SchoolName);
-            acrFlds.SetField("SchoolNum_1", person.SchoolNum);
-            acrFlds.SetField("SchoolClass_1", person.SchoolClass);
+            acrFlds.SetField("SchoolClass", person.SchoolClass); 
 
             acrFlds.SetField("OlympSubject", person.OlympDate + " " + person.Subject);
             acrFlds.SetField("OlympCity", person.OlympCity);
 
-            acrFlds.SetField("OlympSubject_1", person.OlympDate + " " + person.Subject);
-            acrFlds.SetField("OlympCity_1", person.OlympCity);
+            acrFlds.SetField("OlympSubject_1", person.Subject); // родительный падеж не помешал бы
 
-            acrFlds.SetField("Phone", GetDoubleSpacedString(person.Phone));
-            acrFlds.SetField("Email", person.Email);
-            acrFlds.SetField("Phone_1", GetDoubleSpacedString(person.Phone));
-            acrFlds.SetField("Email_1", person.Email);
-
-           /* acrFlds.SetField("Passport", GetDoubleSpacedString(person.PassportSeries + " " + person.PassportNumber));
-            acrFlds.SetField("Passport_1", GetDoubleSpacedString(person.PassportSeries + " " + person.PassportNumber));
-
-            string PassportDate_Day = GetSpacedString(person.PassportDate.Day.ToString("D2"));
-            string PassportDate_Month = GetSpacedString(person.PassportDate.Month.ToString("D2"));
-            string PassportDate_Year = GetSpacedString(person.PassportDate.Year.ToString());
-            acrFlds.SetField("PassportDate_Day", PassportDate_Day);
-            acrFlds.SetField("PassportDate_Month", PassportDate_Month);
-            acrFlds.SetField("PassportDate_Year", PassportDate_Year);
-
-            acrFlds.SetField("PassportDate_Day_1", PassportDate_Day);
-            acrFlds.SetField("PassportDate_Month_1", PassportDate_Month);
-            acrFlds.SetField("PassportDate_Year_1", PassportDate_Year);*/
-
+            for (int i = 0; i < person.Phone.Length; i++)
+                acrFlds.SetField("Phone" + i.ToString(), person.Phone[i].ToString());
+            for (int i = 0; i < person.Email.Length; i++)
+                 acrFlds.SetField("Email"+i.ToString(), person.Email[i].ToString());
+            for (int i = 0; i < person.TeacherName.Length; i++)
+                acrFlds.SetField("TeacherName" + i.ToString(), person.TeacherName[i].ToString());
 
             if (person.IsCountryside)
-            {
                 acrFlds.SetField("chbIsCountryside", "1");
-               // acrFlds.SetField("chbIsCountryside_1", "1");
-            }
 
             if (person.IsSirota)
-            {
-                acrFlds.SetField("IsSirota", "1");
+                acrFlds.SetField("chbIsSirota", "1");
 
-            }
             if (person.IsDisabled)
-            {
-                acrFlds.SetField("IsDisabled", "1");
+                acrFlds.SetField("chbIsDisabled", "1");
 
-            }
             pdfStm.FormFlattening = true;
             pdfStm.Close();
             pdfRd.Close();

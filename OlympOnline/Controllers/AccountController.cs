@@ -199,6 +199,12 @@ namespace OlympOnline.Controllers
             string password = model.Password ?? "";
             string email = model.Email ?? "";
 
+            if (email.Contains('='))
+            {
+                ModelState.AddModelError("", "Некорректный адрес электронной почты");
+                return View(model);
+            }
+
             List<string> errlist;
             if (!Util.CheckRegistrationInfo(password, email, out errlist))
             {

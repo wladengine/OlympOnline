@@ -1093,6 +1093,11 @@
 
                     cntVseross += 1;
                     $('#Vseros').show();
+                    $('#Vseros_Message').hide();
+                }
+                else {
+                    $('#Vseros_Message').text(data.Message);
+                    $('#Vseros_Message').show();
                 }
                 $('#Vseros tbody').html(tblbodyText);
             }, 'json');
@@ -1127,6 +1132,11 @@
 
                         cntOtherOlymp += 1;
                         $('#OtherOlymp').show();
+                        $('#OtherOlymp_Message').hide();
+                    }
+                    else {
+                        $('#OtherOlymp_Message').text(data.Message);
+                        $('#OtherOlymp_Message').show();
                     }
                     $('#OtherOlymp tbody').html(tblbodyText);
                 }, 'json');
@@ -1202,6 +1212,8 @@
                         <% } %>
                         </tbody>
                     </table>
+                    <span id ="Vseros_Message" class="Red" style="display: none;">
+                    </span>
                     <br />
 
                     <h4>Участие в олимпиадах школьников других вузов</h4>
@@ -1243,6 +1255,8 @@
                         <% } %>
                         </tbody>
                     </table>
+                    <span id ="OtherOlymp_Message" class="Red" style="display: none;">
+                    </span>
                     <br />
                     <hr />
                     <div class="clearfix">
