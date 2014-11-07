@@ -62,9 +62,9 @@
         }
     </script>
     <form action="../../Account/Register" method="post" class="panel form grid_5">
-        <div class = "message error">
+        <%--<div class = "message error">
             Регистрация новых пользователей на Олимпиаду школьников СПбГУ прекращена
-        </div><%--
+        </div>--%>
         <%: Html.ValidationSummary(true, GetGlobalResourceObject("Registration", "HeaderErrors").ToString())%>
         <div>
             <fieldset>
@@ -98,6 +98,6 @@
                     <input id="btnSubmit" type="submit" value="<%= GetGlobalResourceObject("Registration", "btnRegister").ToString() %>" class="button button-green"/>
                 </div>
             </fieldset>
-        </div> --%>
+        </div>
     </form>
 </asp:Content>

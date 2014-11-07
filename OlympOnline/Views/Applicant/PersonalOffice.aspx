@@ -39,7 +39,7 @@
                 changeMonth: true,
                 changeYear: true,
                 showOn: "focus",
-                yearRange: '1920:2000',
+                yearRange: '1920:2005',
                 defaultDate: '-17y',
             });
             $.datepicker.regional["ru"];
@@ -135,10 +135,17 @@
         }
         function CheckBirthDate() {
             var ret = true;
-            
-            if ($('#PersonInfo_BirthDate').val() == '') {
+            var reg_exp = /^(0[1-9]|[12][0-9]|3[01]).(0[1-9]|1[012]).(19\d\d|200[0-5])$/i;
+            if (!reg_exp.test($('#PersonInfo_BirthDate').val())) {
                 ret = false;
                 $('#PersonInfo_BirthDate').addClass('input-validation-error');
+                $('#PersonInfo_BirthDate_Message').text('Некорректный формат даты');
+                $('#PersonInfo_BirthDate_Message').show();
+            }
+            else if ($('#PersonInfo_BirthDate').val() == '') {
+                ret = false;
+                $('#PersonInfo_BirthDate').addClass('input-validation-error');
+                $('#PersonInfo_BirthDate_Message').text('Введите дату рождения');
                 $('#PersonInfo_BirthDate_Message').show();
             }
             else {
@@ -147,7 +154,6 @@
             }
             return ret;
         }
-          
         function CheckBirthPlace() {
             var ret = true;
             if ($('#PersonInfo_BirthPlace').val() == '') {
@@ -405,6 +411,7 @@
                 var ret = true;
                 var val = $('#PassportInfo_PassportCode').val();
                 var ruPassportRegex = /^[0-9\-]+$/i;
+                
                 if ($('#PassportInfo_PassportType').val() == '1' && !ruPassportRegex.test(val)) {
                     ret = false;
                     $('#PassportInfo_PassportCode').addClass('input-validation-error');
@@ -578,7 +585,7 @@
             function CheckPhone() {
                 var ret = true;
                 var val = $('#ContactsInfo_MainPhone').val();
-                var ruPassportRegex = /^[0-9]+$/i;
+                var ruPassportRegex = /^((8|0|((\+|00)\d{1,2}))[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,16}$/i;
                 $('#ContactsInfo_MainPhone_Message').text('Введите основной номер');
                 if ( val == '' ) {
                     ret = false;
@@ -589,7 +596,7 @@
                     if (!ruPassportRegex.test(val)) {
                         ret = false;
                         $('#ContactsInfo_MainPhone').addClass('input-validation-error'); 
-                        $('#ContactsInfo_MainPhone_Message').text('Номер телефона должен состоять из цифр');
+                        $('#ContactsInfo_MainPhone_Message').text('Номер телефона должен быть в формате 8-ХХХ-ХХХХХХХ либо +Х-ХХХ-ХХХХХХХ');
                         $('#ContactsInfo_MainPhone_Message').show();
                     }
                     else {

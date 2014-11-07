@@ -158,10 +158,10 @@ namespace OlympOnline.Controllers
                     model.ParentInfo = new ParentsPersonInfo()
                     {
                         FZ_152Agree = false,
-                        ParentName =  tbAdd.Rows[0].Field<string>("ParentName"),
-                        ParentAddress = tbAdd.Rows[0].Field<string>("ParentAdress")
+                        ParentName =  tbAdd.Rows[0].Field<string>("ParentName") ?? "",
+                        ParentAddress = tbAdd.Rows[0].Field<string>("ParentAdress") ?? ""
                     };
-                } 
+                }
             }
             return View("PersonalOffice", model);
         }
@@ -203,9 +203,10 @@ namespace OlympOnline.Controllers
 
                 DateTime bdate;
                 if (!DateTime.TryParse(model.PersonInfo.BirthDate, CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat, DateTimeStyles.None, out bdate))
-                    bdate = DateTime.Now;
+                    bdate = DateTime.Now.Date;
+                bdate = bdate.Date;
 
-                if (bdate.Year < (DateTime.Now.Year - 80))
+                if (bdate.Year < (DateTime.Now.Year - 80) || bdate.Date >= DateTime.Now.Date)
                 {
                     model.PersonInfo.NationalityList = Util.GetNationalityList();
                     model.PersonInfo.SexList = Util.GetSexList("ru");
@@ -349,8 +350,8 @@ namespace OlympOnline.Controllers
             }
             else if (model.Stage == 5)
             {
-                Util.AbitDB.ExecuteQuery("UPDATE Person SET IsSirota=@IsSirota, IsDisabled=@IsDisabled WHERE Id=@Id",
-                        new Dictionary<string, object>() { { "@IsSirota", model.AddInfo.IsSirota }, { "@IsDisabled", model.AddInfo.IsDisabled }, { "@Id", UserId } });
+                Util.AbitDB.ExecuteQuery("UPDATE Person SET IsSirota=@IsSirota, IsDisabled=@IsDisabled, RegistrationStage=@RegistrationStage WHERE Id=@Id",
+                        new Dictionary<string, object>() { { "@IsSirota", model.AddInfo.IsSirota }, { "@IsDisabled", model.AddInfo.IsDisabled }, { "@RegistrationStage", iRegStage < 6 ? 6 : iRegStage }, { "@Id", UserId } });
             }
             else if (model.Stage == 6)
             {
@@ -360,13 +361,14 @@ namespace OlympOnline.Controllers
                     return View("PersonalOffice", model);
                 }
 
-                string query = string.Format("UPDATE Person SET ParentName=@ParentName, ParentAdress=@ParentAdress WHERE Id=@Id");
+                string query = string.Format("UPDATE Person SET ParentName=@ParentName, ParentAdress=@ParentAdress, RegistrationStage=@RegistrationStage WHERE Id=@Id");
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@Id", UserId);
                 dic.AddItem("@ParentName", model.ParentInfo.ParentName);
                 dic.AddItem("@ParentAdress", model.ParentInfo.ParentAddress);
-                if (iRegStage <= 6)
-                    dic.Add("@RegistrationStage", 100);
+                dic.Add("@RegistrationStage", 100);
+                //if (iRegStage <= 6)
+                //    dic.Add("@RegistrationStage", 100);
                 Util.AbitDB.ExecuteQuery(query, dic);
 
             }
@@ -994,14 +996,29 @@ namespace OlympOnline.Controllers
 
             Id = Guid.NewGuid();
 
-            string query = @"INSERT INTO PersonOtherOlympsVseross 
-(Id, PersonId, OtherOlympStageId, OtherOlympSubjectId, OtherOlympStatusId) VALUES (@Id, @PersonId, @OtherOlympStageId, @OtherOlympSubjectId, @OtherOlympStatusId)";
+            string query = @"SELECT COUNT(*) FROM PersonOtherOlympsVseross WHERE PersonId=@PersonId 
+AND OtherOlympStageId=@OtherOlympStageId AND OtherOlympSubjectId=@OtherOlympSubjectId AND OtherOlympStatusId=@OtherOlympStatusId";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@Id", Id);
             dic.Add("@PersonId", PersonId);
             dic.Add("@OtherOlympSubjectId", iSubjectId);
             dic.Add("@OtherOlympStageId", iStageId);
             dic.Add("@OtherOlympStatusId", iStatusId);
+
+            try
+            {
+                int cnt = (int)Util.AbitDB.GetValue(query, dic);
+                if (cnt > 0)
+                    return Json(new { IsOk = false, Message = "Ошибка: такая олимпиада уже внесена" });
+            }
+            catch
+            {
+                return Json(new { IsOk = false, Message = "Ошибка при чтении из базы" });
+            }
+
+
+            query = @"INSERT INTO PersonOtherOlympsVseross 
+(Id, PersonId, OtherOlympStageId, OtherOlympSubjectId, OtherOlympStatusId) VALUES (@Id, @PersonId, @OtherOlympStageId, @OtherOlympSubjectId, @OtherOlympStatusId)";
 
             try
             {
@@ -1029,15 +1046,26 @@ namespace OlympOnline.Controllers
 
             Id = Guid.NewGuid();
 
-            string query = @"INSERT INTO PersonOtherOlymps
-(Id, PersonId, VuzName, OtherOlympSubjectId, OtherOlympStatusId) VALUES (@Id, @PersonId, @VuzName, @OtherOlympSubjectId, @OtherOlympStatusId)";
+            string query = @"SELECT COUNT(*) FROM PersonOtherOlymps WHERE PersonId=@PersonId AND VuzName=@VuzName AND OtherOlympSubjectId=@OtherOlympSubjectId AND OtherOlympStatusId=@OtherOlympStatusId";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@Id", Id);
             dic.Add("@PersonId", PersonId);
             dic.Add("@OtherOlympSubjectId", iSubjectId);
             dic.Add("@VuzName", vuzName);
             dic.Add("@OtherOlympStatusId", iStatusId);
+            try
+            {
+                int cnt = (int)Util.AbitDB.GetValue(query, dic);
+                if (cnt > 0)
+                    return Json(new { IsOk = false, Message = "Ошибка: такая олимпиада уже внесена" });
+            }
+            catch
+            {
+                return Json(new { IsOk = false, Message = "Ошибка при чтении из базы" });
+            }
 
+            query = @"INSERT INTO PersonOtherOlymps
+(Id, PersonId, VuzName, OtherOlympSubjectId, OtherOlympStatusId) VALUES (@Id, @PersonId, @VuzName, @OtherOlympSubjectId, @OtherOlympStatusId)";
             try
             {
                 Util.AbitDB.ExecuteQuery(query, dic);
