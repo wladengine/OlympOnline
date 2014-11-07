@@ -375,14 +375,19 @@ PdfWriter.AllowPrinting);
 
             string address = person.Code + (string.IsNullOrEmpty(person.Code) ? "" : " ") + person.City + " " + person.Street.Replace("улица", "ул.").Replace("проспект", "пр.")
                 + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
-            acrFlds.SetField("Address", address);
-            acrFlds.SetField("Address_1", address);
+            string[] splitStr = GetSplittedStrings(address, 75, 60, 2);
+            for (int i = 1; i <= 2; i++)
+                acrFlds.SetField("Address" + i, splitStr[i - 1]);
 
             acrFlds.SetField("ParentName", person.ParentName);
-            acrFlds.SetField("ParentAdress1", person.ParentAdress);
+            splitStr = GetSplittedStrings(person.ParentAdress, 50, 70, 2);
+            for (int i = 1; i <= 2; i++)
+                acrFlds.SetField("ParentAdress" + i, splitStr[i - 1]);
 
             acrFlds.SetField("PersonName", Surname + " " + Name + " " + SecondName);
-            acrFlds.SetField("PersonAdress1", address);
+            splitStr = GetSplittedStrings(address, 50, 70, 2);
+            for (int i = 1; i <= 2; i++)
+                acrFlds.SetField("PersonAdress" + i, splitStr[i - 1]);
 
             acrFlds.SetField("SchoolName", person.SchoolName);
             acrFlds.SetField("SchoolNum", person.SchoolNum);
@@ -398,7 +403,7 @@ PdfWriter.AllowPrinting);
             for (int i = 0; i < person.Email.Length; i++)
                  acrFlds.SetField("Email"+i.ToString(), person.Email[i].ToString());
             for (int i = 0; i < person.TeacherName.Length; i++)
-                acrFlds.SetField("TeacherName" + i.ToString(), person.TeacherName[i].ToString());
+                acrFlds.SetField("TeacherName" + i.ToString(), person.TeacherName[i].ToString().ToUpper());
 
             if (person.IsCountryside)
                 acrFlds.SetField("chbIsCountryside", "1");
@@ -442,6 +447,35 @@ PdfWriter.AllowPrinting);
                     s += c.ToString() + "  ";
             }
             return s.Trim();
+        }
+    
+
+    public static string[] GetSplittedStrings(string sourceStr, int firstStrLen, int strLen, int numOfStrings)
+        {
+            sourceStr = sourceStr ?? "";
+            string[] retStr = new string[numOfStrings];
+            int index = 0, startindex = 0;
+            for (int i = 0; i < numOfStrings; i++)
+            {
+                if (sourceStr.Length > startindex && startindex >= 0)
+                {
+                    int rowLength = firstStrLen;//длина первой строки
+                    if (i > 1) //длина остальных строк одинакова
+                        rowLength = strLen;
+                    index = startindex + rowLength;
+                    if (index < sourceStr.Length)
+                    {
+                        index = sourceStr.IndexOf(" ", index);
+                        string val = index > 0 ? sourceStr.Substring(startindex, index - startindex) : sourceStr.Substring(startindex);
+                        retStr[i] = val;
+                    }
+                    else
+                        retStr[i] = sourceStr.Substring(startindex);
+                }
+                startindex = index;
+            }
+
+            return retStr;
         }
     }
 }
