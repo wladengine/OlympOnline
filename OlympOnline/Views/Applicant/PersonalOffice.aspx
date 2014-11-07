@@ -1104,6 +1104,7 @@
 
         }
         function DeleteVseross(olympId) {
+            $('#Vseros_Message').hide();
             $.post('/Applicant/DeleteVseross', { id: olympId }, function (data) {
                 if (data.IsOk) {
                     $("#Vs" + olympId).html('').hide();
@@ -1143,6 +1144,7 @@
             }
         }
         function DeleteOther(olympId) {
+            $('#OtherOlymp_Message').hide();
             $.post('/Applicant/DeleteOtherOlymp', { id: olympId }, function (data) {
                 if (data.IsOk) {
                     $("#Oth" + olympId).html('').hide();
