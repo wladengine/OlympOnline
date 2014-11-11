@@ -835,7 +835,7 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
 
                 bool isOpen = (bool?)rw["IsOpen"] ?? true;
                 if (!isOpen)
-                    return Json(new { IsOk = false, ErrorMessage = "Ошибка: приём заявлений на участие в олимпиаду закрыт" });
+                    return Json(new { IsOk = false, ErrorMessage = "Ошибка: приём заявлений на участие в олимпиаду ещё не начался" });
 
                 var data = new
                 {
