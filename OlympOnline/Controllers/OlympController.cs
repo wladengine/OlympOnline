@@ -256,7 +256,7 @@ namespace OlympOnline.Controllers
             };
 
             DataTable tbl =
-                Util.AbitDB.GetDataTable("SELECT Id, OlympiadId, City, Subject, Stage, Enabled, DateOfDisable, DateOfStart, BlackBoardUrl, IsFullTime FROM [extApplication] WHERE PersonId=@PersonId AND Id=@Id", prms);
+                Util.AbitDB.GetDataTable("SELECT Id, OlympiadId, City, Subject, Stage, Enabled, DateOfDisable, DateOfStart, BlackBoardUrl, IsFullTime, BBLogin FROM [extApplication] WHERE PersonId=@PersonId AND Id=@Id", prms);
 
             if (tbl.Rows.Count == 0)
                 return RedirectToAction("Main", "Applicant");
@@ -273,7 +273,8 @@ namespace OlympOnline.Controllers
                 City = rw.Field<string>("City"),
                 DateOfApply = rw.Field<DateTime>("DateOfStart"),
                 BlackBoardURL = rw.Field<string>("BlackBoardUrl"),
-                IsFullTime = rw.Field<bool?>("IsFullTime") ?? false
+                IsFullTime = rw.Field<bool?>("IsFullTime") ?? false,
+                BBLogin = rw.Field<string>("BBLogin"),
             };
 
             int OlympiadId = rw.Field<int>("OlympiadId");

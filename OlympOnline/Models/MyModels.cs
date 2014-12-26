@@ -246,6 +246,7 @@ namespace OlympOnline.Models
         public DateTime DateOfApply { get; set; }
 
         public string TeacherName { get; set; }
+        public string BBLogin { get; set; }
     }
 
     //-------------------------------------------

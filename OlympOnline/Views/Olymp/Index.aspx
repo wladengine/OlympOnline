@@ -167,11 +167,13 @@
        <% } else if (DateTime.Now - Model.DateOfApply > new TimeSpan(0, 7, 0))
           { %>
         <b>Вам следует <a href="<%= Model.BlackBoardURL %>">пройти по ссылке</a> для прохождения олимпиады</b> 
+        <b>Не забудьте Ваш логин: <%= Model.BBLogin %></b>
        <% } else 
           { %>
         <b>Через <%= (Model.DateOfApply.AddMinutes(7) - DateTime.Now).Minutes.ToString() %> мин. 
             <%= (Model.DateOfApply.AddMinutes(7) - DateTime.Now).Seconds.ToString() %> сек. 
-            Вам следует <a href="<%= Model.BlackBoardURL %>">пройти по ссылке</a> для прохождения олимпиады</b> 
+            Вам следует <a href="<%= Model.BlackBoardURL %>">пройти по ссылке</a> для прохождения олимпиады</b> <br />
+        <b>Не забудьте Ваш логин: <%= Model.BBLogin %></b>
        <% } %>
    </div>
 <% }
