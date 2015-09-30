@@ -61,7 +61,7 @@ namespace OlympOnline.Controllers
                 string email = model.Email;
                 string remixPwd = Util.MD5Str(model.Password);
 
-                string query = "SELECT [User].Id, [User].SID, IsApproved, Ticket FROM [User] LEFT JOIN BBUser ON BBUser.UserId=[User].Id LEFT JOIN AuthTicket ON AuthTicket.UserId=[User].Id WHERE [User].Password=@Password AND ([User].Email=@Email OR BBUser.BBLogin=@Email)";
+                string query = "SELECT [User].Id, [User].SID, IsApproved, Ticket FROM [User] LEFT JOIN BBUser ON BBUser.UserId=[User].Id LEFT JOIN AuthTicket ON AuthTicket.UserId=[User].Id WHERE [User].Password=@Password AND (/* [User].Email=@Email OR */ BBUser.BBLogin=@Email)";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@Password", remixPwd);
                 dic.Add("@Email", email);
