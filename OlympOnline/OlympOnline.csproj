@@ -239,6 +239,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OlympController.cs" />
     <Compile Include="Controllers\PDFUtils.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Util.cs" />
     <Compile Include="Controllers\Util.Functions.cs" />
     <Compile Include="Controllers\Util.Kladr.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Models\ForeignModels.cs" />
     <Compile Include="Models\LangPack.cs" />
     <Compile Include="Models\MyModels.cs" />
+    <Compile Include="Models\TestModelClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLClass.cs" />
     <Compile Include="Views\Shared\SiteForeign.Master.cs">
@@ -1375,6 +1377,7 @@
     <Content Include="Views\Applicant\PersonalOffice.aspx" />
     <Content Include="Views\Applicant\PriorityChanger.aspx" />
     <Content Include="Views\Shared\LogOnUserControlForeign.ascx" />
+    <Content Include="Views\Test\Index.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -1601,7 +1604,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>58337</DevelopmentServerPort>
+          <DevelopmentServerPort>29882</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

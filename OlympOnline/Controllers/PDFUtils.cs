@@ -325,7 +325,7 @@ WHERE extApplication.Id=@Id";
                 IsDisabled = rw.Field<bool>("IsDisabled")
             };
 
-            string dotName = "Application2014.pdf";
+            string dotName = "Application.pdf";
 
             byte[] templateBytes;
             using (FileStream fs = new FileStream(dirPath + dotName, FileMode.Open, FileAccess.Read))

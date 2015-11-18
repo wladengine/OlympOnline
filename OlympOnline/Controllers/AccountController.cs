@@ -352,7 +352,7 @@ namespace OlympOnline.Controllers
             if (!Util.CheckAuthCookies(Request.Cookies, out UserId))//если вдруг ВНЕЗАПНО просрочились куки или зашёл правильный пользователь
                 return View("Error", new AccountErrorModel() { ErrorHtmlString = authError });
 
-            string query = "SELECT Password, Email FROM [User] WHERE Id=@Id";
+            string query = "SELECT [User].Password, [User].Email, BBLogin FROM [User] INNER JOIN BBUser ON BBUser.UserId = [User].Id WHERE [User].Id=@Id";
             DataTable tbl = Util.AbitDB.GetDataTable(query, new Dictionary<string, object>() { { "@Id", UserId } });
             if (tbl.Rows.Count == 0)
                 return View("Error", new AccountErrorModel()
@@ -361,7 +361,7 @@ namespace OlympOnline.Controllers
                 });
             var User =
                 (from DataRow rw in tbl.Rows
-                 select new { Password = rw.Field<string>("Password"), Email = rw.Field<string>("Email") }).FirstOrDefault();
+                 select new { Password = rw.Field<string>("Password"), Email = rw.Field<string>("Email"), BBLogin = rw.Field<string>("BBLogin") }).FirstOrDefault();
             //var User = Util.ABDB.User.Where(x => x.Id == UserId).FirstOrDefault();
             string remixPwdOld = User.Password;
             string oldPwdError = "Введён неправильный предыдущий пароль";
@@ -374,8 +374,8 @@ namespace OlympOnline.Controllers
             string remixPwd = Util.MD5Str(model.NewPassword);
             try//пробуем сохранить новый пароль в базе
             {
-                query = "UPDATE [User] SET Password=@Password WHERE Id=@Id";
-                Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", remixPwd }, { "@Id", UserId } });
+                query = "UPDATE [User] SET Password=@Password WHERE Id=@Id; UPDATE [BBUser] SET BBPassword=@EncodedPassword WHERE Id=@Id; ";
+                Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", remixPwd }, { "@EncodedPassword", model.NewPassword }, { "@Id", UserId } });
             }
             catch//не получилось сохранить
             {
@@ -388,8 +388,8 @@ namespace OlympOnline.Controllers
             {
                 MailMessage msg = new MailMessage();
                 msg.To.Add(User.Email);
-                msg.Body = string.Format(GetMailBody(Server.MapPath("~/Templates/EmailBodyChangePassword.eml")), model.NewPassword);
-                msg.Subject = "Изменение пароля на сайте приёмной комиссии СПбГУ";
+                msg.Body = string.Format(GetMailBody(Server.MapPath("~/Templates/EmailBodyChangePassword.eml")), model.NewPassword, User.BBLogin);
+                msg.Subject = "Изменение пароля в ЛК олимпиады школьников СПбГУ";
                 SmtpClient client = new SmtpClient();
                 client.Send(msg);
             }
@@ -509,11 +509,18 @@ namespace OlympOnline.Controllers
                     DateTime? BirthDate = tbl.Rows[0].Field<DateTime?>("P_BIRTH");
 
                     bool needToApprove = true;
-                    if (!string.IsNullOrEmpty(Surname) && !BirthDate.HasValue)
+                    if (string.IsNullOrEmpty(Surname) && !BirthDate.HasValue)
                         needToApprove = false;
 
                     if (!needToApprove)
-                        return Json(new { IsOk = true });
+                    {
+                        Guid UserId = tbl.Rows[0].Field<Guid>("Id");
+
+                        if (RestoreUserPassword(UserId, email))
+                            return Json(new { IsOk = true, Email = true });
+                        else
+                            return Json(new { IsOk = false, Email = false });
+                    }
 
                     return Json(new { NeedInfo = true });
                 }
@@ -523,8 +530,11 @@ namespace OlympOnline.Controllers
         public ActionResult RestoreByData(string email, string surname, string birthdate)
         {
             DateTime BirthDate;
-            if (!DateTime.TryParse(birthdate, System.Globalization.CultureInfo.GetCultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out BirthDate))
+            if (!string.IsNullOrEmpty(birthdate))
+                birthdate = birthdate.Replace('/', '.');
+            if (!DateTime.TryParse(birthdate, System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), System.Globalization.DateTimeStyles.None, out BirthDate))
                 return Json(new { IsOk = false });
+
             string query = "SELECT [User].Id FROM [User] INNER JOIN Person ON Person.Id=[User].Id WHERE [User].Email=@Email AND Surname=@Surname AND BirthDate=@BirthDate";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.AddItem("@Email", email);
@@ -534,27 +544,59 @@ namespace OlympOnline.Controllers
 
             if (tbl.Rows.Count == 0)
             {
-                return Json(new { IsOk = false, Email = false });
+                return Json(new { IsOk = false, Email = false, WrongData = false });
             }
             else
             {
-                string newPass = System.IO.Path.GetRandomFileName();
-                string remixPwd = Util.MD5Str(newPass);
+                Guid UserId = tbl.Rows[0].Field<Guid>("Id");
 
-                if (SendEmail(email, newPass))
-                {
-                    query = "UPDATE [User] SET Password=@Password WHERE Email=@Email";
-                    Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", remixPwd }, { "@Email", email } });
+                if (RestoreUserPassword(UserId, email))
                     return Json(new { IsOk = true, Email = true });
-                }
                 else
-                {
                     return Json(new { IsOk = false, Email = false });
-                }
+
+                //string newPass = System.IO.Path.GetRandomFileName();
+                //string remixPwd = Util.MD5Str(newPass);
+                //query = "SELECT BBLogin FROM BBUser WHERE UserId=@UserId";
+                //string BBLogin = Util.AbitDB.GetStringValue(query, new Dictionary<string, object>() { { "@UserId", UserId } });
+
+                //if (SendEmail(email, newPass, BBLogin))
+                //{
+                //    query = "UPDATE [User] SET Password=@Password WHERE Id=@UserId";
+                //    Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", remixPwd }, { "@UserId", UserId } });
+                //    query = "UPDATE [BBUser] SET BBPassword=@Password WHERE UserId=@UserId";
+                //    Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", newPass }, { "@UserId", UserId } });
+                //    return Json(new { IsOk = true, Email = true });
+                //}
+                //else
+                //{
+                //    return Json(new { IsOk = false, Email = false });
+                //}
             }
         }
 
-        private bool SendEmail(string email, string password)
+        private bool RestoreUserPassword(Guid UserId, string email)
+        {
+            string newPass = System.IO.Path.GetRandomFileName();
+            string remixPwd = Util.MD5Str(newPass);
+            string query = "SELECT BBLogin FROM BBUser WHERE UserId=@UserId";
+            string BBLogin = Util.AbitDB.GetStringValue(query, new Dictionary<string, object>() { { "@UserId", UserId } });
+
+            if (SendEmail(email, newPass, BBLogin))
+            {
+                query = "UPDATE [User] SET Password=@Password WHERE Id=@UserId";
+                Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", remixPwd }, { "@UserId", UserId } });
+                query = "UPDATE [BBUser] SET BBPassword=@Password WHERE UserId=@UserId";
+                Util.AbitDB.ExecuteQuery(query, new Dictionary<string, object>() { { "@Password", newPass }, { "@UserId", UserId } });
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool SendEmail(string email, string password, string BBLogin)
         {
             try
             {
@@ -570,10 +612,10 @@ namespace OlympOnline.Controllers
                                 string.Format("~/Templates/EmailBodyRestore{0}.eml",
                                 System.Threading.Thread.CurrentThread.CurrentCulture.Name == System.Globalization.CultureInfo.GetCultureInfo("ru-RU").Name ? "" : "Foreign")
                             )
-                        ), password
+                        ), password, BBLogin
                     );
                 msg.Subject = System.Threading.Thread.CurrentThread.CurrentCulture.Name == System.Globalization.CultureInfo.GetCultureInfo("ru-RU").Name ?
-                    "Личный кабинет поступающего в СПбГУ - смена пароля" : "Applicant Personal Account - password change";
+                    "Личный кабинет олимпиады школьников в СПбГУ - смена пароля" : "Applicant Personal Account - password change";
                 SmtpClient client = new SmtpClient();
                 client.Send(msg);
                 return true;
