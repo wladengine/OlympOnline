@@ -22,7 +22,7 @@
                 yearRange: '1920:2007',
                 defaultDate: '-16y',
             });
-        });
+        
         $.datepicker.regional["ru"];
     });
     function UserRequest() {
