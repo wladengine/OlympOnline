@@ -11,6 +11,7 @@
     <script type="text/javascript" src="../../Scripts/jquery.validate-vsdoc.js"></script>
 <% } %>
 <script type="text/javascript" src="../../Scripts/jquery-ui-1.8.11.js"></script>
+    <script language="javascript" type="text/javascript" src="../../Scripts/jquery.ui.datepicker-ru.js"></script>
 <script type="text/javascript">
     $(function() {
         $('#BirthDate').datepicker({
@@ -19,7 +20,8 @@
                 showOn: "focus",
                 yearRange: '1920:2000',
                 defaultDate: '-17y',
-            });
+        });
+        $.datepicker.regional["ru"];
     });
     function UserRequest() {
         var email = $('#email').val();
@@ -75,7 +77,7 @@
             </div>
             <div class="clearfix">
                 <label for="BirthDate"><%= GetGlobalResourceObject("ForgotPassword", "BirthDate").ToString() %></label>
-                <input id="BirthDate" type="text" class="date" />
+                <input id="BirthDate" type="text" class="date"/>
             </div><br />
             <div class="clearfix">
                 <button class="button button-blue" onclick="DataRequest()"><%= GetGlobalResourceObject("ForgotPassword", "btnSubmit").ToString()%></button>
