@@ -275,7 +275,7 @@ SchoolClass, Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
 [Email], Phone, extPerson.Barcode, extApplication.City AS OlympCity, 
 extApplication.Subject, extApplication.Date AS OlympDate,
 extApplication.Stage, 
-PassportSeries, PassportNumber, PassportDate, PassportTypeId, PassportAuthor
+PassportSeries, PassportNumber, PassportDate, PassportTypeId, PassportAuthor,
 ParentName, ParentAdress,
 IsSirota, IsDisabled, 
 Teacher
@@ -317,7 +317,7 @@ WHERE extApplication.Id=@Id";
                 PassportSeries = rw["PassportSeries"].ToString(),
                 PassportNumber = rw["PassportNumber"].ToString(),
                 PassportDate = rw.Field<DateTime>("PassportDate"),
-                IsPassport = rw.Field<int>("") != 4,
+                IsPassport = rw.Field<int>("PassportTypeId") != 4,
                 PassportAuthor = rw.Field<string>("PassportAuthor"),
                 IsCountryside = rw.Field<bool>("IsCountryside"),
                 TeacherName = rw.Field<string>("Teacher"),
@@ -349,7 +349,7 @@ PdfWriter.AllowPrinting);
             PdfContentByte cb = pdfStm.GetOverContent(1);
 
             iTextSharp.text.Image img = barcode.CreateImageWithBarcode(cb, null, null);
-            img.SetAbsolutePosition(360, 795);
+            img.SetAbsolutePosition(485, 785);
             cb.AddImage(img);
 
             string Surname = person.Surname.ToUpper();//GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper(); 
@@ -425,7 +425,7 @@ PdfWriter.AllowPrinting);
                 acrFlds.SetField("PassportSeria" + i.ToString(), person.PassportSeries[i].ToString());
             for (int i = 0; i < person.PassportNumber.Length; i++)
                 acrFlds.SetField("PassportNumber" + i.ToString(), person.PassportNumber[i].ToString());
-            acrFlds.SetField("PassportAuthor", "                  " + person.PassportAuthor + ", " + person.PassportDate.ToShortDateString());
+            acrFlds.SetField("PassportAuthor", "                   " + person.PassportAuthor + ", " + person.PassportDate.ToShortDateString());
 
             pdfStm.FormFlattening = true;
             pdfStm.Close();

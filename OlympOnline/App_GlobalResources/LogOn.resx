@@ -124,7 +124,7 @@
     <value>Логин (ol16XXXXX)</value>
   </data>
   <data name="EmailValidationMessage" xml:space="preserve">
-    <value>Введите Email пользователя</value>
+    <value>Введите логин пользователя</value>
   </data>
   <data name="HeaderAccountInformation" xml:space="preserve">
     <value>Информация об учётной записи</value>

@@ -79,7 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Введите Email пользователя.
+        ///   Looks up a localized string similar to Введите логин пользователя.
         /// </summary>
         internal static string EmailValidationMessage {
             get {
