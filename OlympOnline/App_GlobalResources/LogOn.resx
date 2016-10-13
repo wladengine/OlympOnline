@@ -121,7 +121,7 @@
     <value>Войти</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Логин (ol15XXXXX)</value>
+    <value>Логин (ol16XXXXX)</value>
   </data>
   <data name="EmailValidationMessage" xml:space="preserve">
     <value>Введите Email пользователя</value>

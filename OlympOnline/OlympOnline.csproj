@@ -1440,10 +1440,12 @@
     <Content Include="App_GlobalResources\Common.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Common.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="App_GlobalResources\Common.ru-RU.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Common.ru-RU.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="App_GlobalResources\ContactsInfo.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
@@ -1472,6 +1474,7 @@
     <Content Include="App_GlobalResources\Locales.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Locales.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="App_GlobalResources\LogOn.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>

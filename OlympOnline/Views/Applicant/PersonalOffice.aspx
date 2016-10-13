@@ -241,7 +241,7 @@
             <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                       <% if (1 == 2)
+                       <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
@@ -493,7 +493,7 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <% if (1 == 2)
+                        <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
@@ -878,7 +878,7 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <% if (1 == 2)
+                        <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
@@ -1034,7 +1034,7 @@
                 <div class="grid_2">
                     <ol>
                         <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                        <% if (1 == 2)
+                        <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                         <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                         <li><a href="../../Applicant?step=4">Образование</a></li>
@@ -1269,7 +1269,7 @@
             <div class="grid_2">
                 <ol>
                     <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                    <% if (1 == 2)
+                    <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                     <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                     <li><a href="../../Applicant?step=4">Образование</a></li>
@@ -1398,7 +1398,7 @@
             <div class="grid_2">
                 <ol>
                     <li><a href="../../Applicant?step=1">Личные данные</a></li>
-                    <% if (1 == 2)
+                    <% if (1 == 1)
                        { %><li><a href="../../Applicant?step=2">Паспорт</a></li> <%}%>
                     <li><a href="../../Applicant?step=3">Контактная информация</a></li>
                     <li><a href="../../Applicant?step=4">Образование</a></li>

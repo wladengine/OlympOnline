@@ -44,8 +44,6 @@ namespace OlympOnline.Controllers
                 stage = tbl.Rows[0].Field<int>("RegistrationStage");
 
             PersonalOffice model = new PersonalOffice() { Lang = "ru", Stage = stage != 0 ? stage : 1, Enabled = !Util.CheckPersonReadOnlyStatus(PersonId) };
-            if (model.Stage == 2)
-                model.Stage++;
             if (model.Stage == 1)
             {
                 model.PersonInfo = new InfoPerson();
@@ -234,7 +232,6 @@ namespace OlympOnline.Controllers
             }
             else if (model.Stage == 2)
             {
-                /*
                 int iPassportType = 1;
                 if (!int.TryParse(model.PassportInfo.PassportType, out iPassportType))
                     iPassportType = 1;
@@ -268,7 +265,6 @@ namespace OlympOnline.Controllers
                 dic.AddItem("@RegistrationStage", iRegStage < 3 ? 3 : iRegStage);
 
                 Util.AbitDB.ExecuteQuery(query, dic);
-                */
             }
             else if (model.Stage == 3)
             {
