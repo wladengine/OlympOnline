@@ -275,7 +275,7 @@ SchoolClass, Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
 [Email], Phone, extPerson.Barcode, extApplication.City AS OlympCity, 
 extApplication.Subject, extApplication.Date AS OlympDate,
 extApplication.Stage, 
---PassportSeries, PassportNumber, PassportDate,
+PassportSeries, PassportNumber, PassportDate, PassportTypeId, PassportAuthor
 ParentName, ParentAdress,
 IsSirota, IsDisabled, 
 Teacher
@@ -314,9 +314,11 @@ WHERE extApplication.Id=@Id";
                 Stage = rw["Stage"].ToString(),
                 Phone = rw["Phone"].ToString(),
                 Email = rw["Email"].ToString(),
-               // PassportSeries = rw["PassportSeries"].ToString(),
-               // PassportNumber = rw["PassportNumber"].ToString(),
-               // PassportDate = rw.Field<DateTime>("PassportDate"),
+                PassportSeries = rw["PassportSeries"].ToString(),
+                PassportNumber = rw["PassportNumber"].ToString(),
+                PassportDate = rw.Field<DateTime>("PassportDate"),
+                IsPassport = rw.Field<int>("") != 4,
+                PassportAuthor = rw.Field<string>("PassportAuthor"),
                 IsCountryside = rw.Field<bool>("IsCountryside"),
                 TeacherName = rw.Field<string>("Teacher"),
                 ParentName = rw.Field<string>("ParentName"),
@@ -325,7 +327,7 @@ WHERE extApplication.Id=@Id";
                 IsDisabled = rw.Field<bool>("IsDisabled")
             };
 
-            string dotName = "Application.pdf";
+            string dotName = "Application_2016.pdf";
 
             byte[] templateBytes;
             using (FileStream fs = new FileStream(dirPath + dotName, FileMode.Open, FileAccess.Read))
@@ -413,6 +415,17 @@ PdfWriter.AllowPrinting);
 
             if (person.IsDisabled)
                 acrFlds.SetField("chbIsDisabled", "1");
+
+            if (person.IsPassport)
+                acrFlds.SetField("chbIsPassport", "1");
+            else
+                acrFlds.SetField("chbIsSvidetelstvo", "1");
+
+            for (int i = 0; i < person.PassportSeries.Length; i++)
+                acrFlds.SetField("PassportSeria" + i.ToString(), person.PassportSeries[i].ToString());
+            for (int i = 0; i < person.PassportNumber.Length; i++)
+                acrFlds.SetField("PassportNumber" + i.ToString(), person.PassportNumber[i].ToString());
+            acrFlds.SetField("PassportAuthor", "                  " + person.PassportAuthor + ", " + person.PassportDate.ToShortDateString());
 
             pdfStm.FormFlattening = true;
             pdfStm.Close();

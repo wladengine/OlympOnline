@@ -39,7 +39,7 @@
                 changeMonth: true,
                 changeYear: true,
                 showOn: "focus",
-                yearRange: '1920:2007',
+                yearRange: '1920:2008',
                 defaultDate: '-17y',
             });
             $.datepicker.regional["ru"];
@@ -135,7 +135,7 @@
         }
         function CheckBirthDate() {
             var ret = true;
-            var reg_exp = /^(0[1-9]|[12][0-9]|3[01]).(0[1-9]|1[012]).(19\d\d|200[0-7])$/i;
+            var reg_exp = /^(0[1-9]|[12][0-9]|3[01]).(0[1-9]|1[012]).(19\d\d|200[0-8])$/i;
             if (!reg_exp.test($('#PersonInfo_BirthDate').val())) {
                 ret = false;
                 $('#PersonInfo_BirthDate').addClass('input-validation-error');
@@ -270,7 +270,7 @@
                     changeMonth: true,
                     changeYear: true,
                     showOn: "focus",
-                    yearRange: '1967:2014',
+                    yearRange: '1967:2016',
                     maxDate: "+1D",
                     defaultDate: '-3y',
                 });
