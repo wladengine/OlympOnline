@@ -48,9 +48,10 @@ namespace OlympOnline.Controllers
             //    .Select(x => new SelectListItem() { Text = x.Text, Value = x.Value.ToString() })
             //    .ToList();
 
-            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=2013 ORDER BY Subject";
+            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=@Year ORDER BY Subject";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
+            dic.Add("@Year", Util.iOlympYear);
             try
             {
                 DataTable tbl = Util.AbitDB.GetDataTable(query, dic);
