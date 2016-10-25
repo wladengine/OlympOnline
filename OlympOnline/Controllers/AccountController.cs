@@ -853,5 +853,39 @@ namespace OlympOnline.Controllers
             }
         }
         #endregion
+
+        public JsonResult GetClasses(string schoolid)
+        { 
+            int ischoolid;
+            if (!int.TryParse(schoolid, out ischoolid))
+                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
+
+            Guid PersonId;
+            if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
+                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
+
+            string query = @"SELECT DISTINCT SchoolClass_test.Id AS Id, SchoolClass_test.Name AS Name , SchoolTypeCategory.Name as SchoolTypeCategoryName
+                  FROM SchoolClass_test 
+                  INNER JOIN SchoolType_test ON SchoolType_test.SchoolTypeCategoryId = SchoolClass_test.SchoolTypeCategoryId 
+                  INNER JOIN SchoolTypeCategory on SchoolTypeCategory.Id = SchoolType_test.SchoolTypeCategoryId
+                  WHERE SchoolType_test.Id=@SchoolTypeId";
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("@SchoolTypeId", ischoolid); 
+
+            try
+            {
+                string obderby = " ORDER BY SchoolClass_test.Id";
+                DataTable tbl = Util.AbitDB.GetDataTable(query + obderby, dic);
+
+                var lst = (from DataRow rw in tbl.Rows
+                           select new { Id = rw["Id"].ToString(), Name = rw["Name"].ToString() }).ToList();
+
+                return Json(new { IsOk = true, List = lst, LabelName = (tbl.Rows.Count > 0) ? tbl.Rows[0].Field<string>("SchoolTypeCategoryName") : "Класс" });
+            }
+            catch
+            {
+                return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
+            }
+        }
     }
 }

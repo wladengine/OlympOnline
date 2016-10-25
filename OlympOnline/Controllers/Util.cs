@@ -63,7 +63,7 @@ namespace OlympOnline.Controllers
             Dictionary<string, object> dic = new Dictionary<string, object>() { { "@x", 1 } };
             DataTable tbl = new DataTable();
 
-            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolType"), dic);
+            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolType_test"), dic);
             SchoolTypesAll =
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);
@@ -78,7 +78,7 @@ namespace OlympOnline.Controllers
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);
 
-            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolClass"), dic);
+            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolClass_test"), dic);
             SchoolClassesAll =
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);

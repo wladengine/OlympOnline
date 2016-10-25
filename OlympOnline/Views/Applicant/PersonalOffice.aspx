@@ -920,6 +920,33 @@
                // if (!CheckAttestatRegion()) { ret = false; }
                 return ret;
             }
+            function GetClasses() {
+                $classid = $('#EducationInfo_SchoolClassId').val();
+                $label = $('#Label_EducationInfo_SchoolClassId');
+                $bool = 0;
+                $.post('/Account/GetClasses', { schoolid: $('#EducationInfo_SchoolTypeId').val()}, function (data) {
+                    if (data.IsOk) {
+                        var options = '';
+                        for (var i = 0; i < data.List.length; i++) {
+                            options += '<option ';
+                            if (data.List[i].Id == $classid) {
+                                options += 'selected="selected"';
+                                $bool = 1;
+                            }
+                            options += 'value="' + data.List[i].Id + '">' + data.List[i].Name + '</option>';
+                        } 
+                        $('#EducationInfo_SchoolClassId').html(options);
+                        $label.text(data.LabelName);
+                    }
+                    else { 
+                    }
+                    if ($bool == 0) {
+                        var elem = $("#divclass");
+                        elem.children("div").children("span").text(data.List[0].Name);
+                    }
+                }, 'json');
+                
+            }
             function CheckSchoolName() {
                 var ret = true;
                 if ($('#EducationInfo_SchoolName').val() == '') {
@@ -957,6 +984,7 @@
                 return ret;
             }
             $(function () {
+                GetClasses();
                 $('#EducationInfo_SchoolName').keyup(function () { setTimeout(CheckSchoolName); });
                 $('#EducationInfo_SchoolName').blur(function () { setTimeout(CheckSchoolName); });
 
@@ -989,7 +1017,7 @@
                         <fieldset><br />
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.SchoolTypeId, GetGlobalResourceObject("EducationInfo", "SchoolTypeId").ToString())%>
-                            <%= Html.DropDownListFor(x => x.EducationInfo.SchoolTypeId, Model.EducationInfo.SchoolTypeList) %>
+                            <%= Html.DropDownListFor(x => x.EducationInfo.SchoolTypeId, Model.EducationInfo.SchoolTypeList, new Dictionary<string, object>() { { "onchange", "GetClasses()" }} ) %>
                         </div>
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.SchoolName, GetGlobalResourceObject("EducationInfo", "SchoolName").ToString())%>
@@ -1015,10 +1043,16 @@
                         <div class="clearfix">
                             <%= Html.LabelFor(x => x.EducationInfo.RegionEducId, "Регион, в котором находится образовательное учреждение") %>
                             <%= Html.DropDownListFor(x => x.EducationInfo.RegionEducId, Model.EducationInfo.RegionList) %>
-                        </div>
-                        <div class="clearfix">
-                            <%= Html.LabelFor(x => x.EducationInfo.SchoolClassId, "Класс") %>
-                            <%= Html.DropDownListFor(x => x.EducationInfo.SchoolClassId, Model.EducationInfo.SchoolClassList)%>
+                        </div> 
+                        <script>
+                                $(function () {
+                                    var elem = $("#divclass");
+                                    elem.children("div").children("span").width("360px");
+                                });
+                       </script>
+                       <div class="clearfix" id ="divclass">
+                            <%= Html.LabelFor(x => x.EducationInfo.SchoolClassId, "Класс", new Dictionary<string, object>() { { "style", "float: none;" } , {"id","Label_EducationInfo_SchoolClassId"} }) %>
+                            <%= Html.DropDownListFor(x => x.EducationInfo.SchoolClassId, Model.EducationInfo.SchoolClassList, new Dictionary<string, object>() { { "style", "min-width:375px;" }} )%>
                         </div>
                         <div id="CountryMessage" class="message info" style="display:none; border-collapse:collapse;">
                             Пожалуйста, укажите в названии школы страну, где Вы обучались (например, "Oxford, UK", "Oberwolfach, Germany")
