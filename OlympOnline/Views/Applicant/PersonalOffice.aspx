@@ -971,6 +971,15 @@
                         $('#CountryMessage').show();
                     }
                 });
+
+                $('#EducationInfo_SchoolTypeId').change(function () {
+                    if ($('#EducationInfo_SchoolTypeId').val() != 6) {
+                        $('#CountryMessage').hide();
+                    }
+                    else {
+                        $('#CountryMessage').show();
+                    }
+                });
             });
         </script>
         <div class="grid">
@@ -1016,8 +1025,8 @@
                             <%= Html.LabelFor(x => x.EducationInfo.RegionEducId, "Регион, в котором находится образовательное учреждение") %>
                             <%= Html.DropDownListFor(x => x.EducationInfo.RegionEducId, Model.EducationInfo.RegionList) %>
                         </div>
-                        <div class="clearfix">
-                            <%= Html.LabelFor(x => x.EducationInfo.SchoolClassId, "Класс") %>
+                        <div id="_SchoolClass" class="clearfix">
+                            <%= Html.LabelFor(x => x.EducationInfo.SchoolClassId, "Класс", new Dictionary<string, object>() { { "id", "_SchoolClassLabel" }})%>
                             <%= Html.DropDownListFor(x => x.EducationInfo.SchoolClassId, Model.EducationInfo.SchoolClassList)%>
                         </div>
                         <div id="CountryMessage" class="message info" style="display:none; border-collapse:collapse;">
