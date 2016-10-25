@@ -36,6 +36,7 @@ namespace OlympOnline.Controllers
 
             string query = "SELECT Id, Surname, Name, SecondName, BirthPlace, BirthDate, Sex, NationalityId, PassportTypeId, PassportSeries, PassportNumber, PassportAuthor, " +
                       "PassportDate, PassportCode, Phone, Mobiles, CountryId, RegionId, Code, City, Street, House, Korpus, Flat, " +
+                      "HighEducationInfo, SchoolExitYear, " + 
                       "SchoolTypeId, SchoolName, RegistrationStage, SchoolCountryId, SchoolRegionId, SchoolClassId, SchoolCity, SchoolNum, IsCountryside, IsDisabled, IsSirota FROM Person WHERE Id=@Id";
             DataTable tbl = Util.AbitDB.GetDataTable(query, new Dictionary<string, object>() { { "@Id", PersonId } });
             if (tbl.Rows.Count == 0)
@@ -119,6 +120,7 @@ namespace OlympOnline.Controllers
                 model.EducationInfo.RegionEducId = (tbl.Rows[0].Field<int?>("SchoolRegionId") ?? 1).ToString();
                 model.EducationInfo.SchoolClassId = (tbl.Rows[0].Field<int?>("SchoolClassId") ?? 1).ToString();
                 
+                    model.EducationInfo.SchoolExitYear = (tbl.Rows[0].Field<int?>("SchoolExitYear").Value).ToString();
             }
             else if (model.Stage == 5)
             {
@@ -320,6 +322,9 @@ namespace OlympOnline.Controllers
                 int iSchoolClassId;
                 if (!int.TryParse(model.EducationInfo.SchoolClassId, out iSchoolClassId))
                     iSchoolClassId = 1;
+                 
+                int schoolExitYear;
+                int.TryParse(model.EducationInfo.SchoolExitYear, out schoolExitYear);
 
                 string qAdditionalString = string.Empty;
 
@@ -332,7 +337,15 @@ namespace OlympOnline.Controllers
                 dic.AddItem("@SchoolCity", model.EducationInfo.SchoolCity);
                 dic.AddItem("@SchoolRegionId", iRegionEducId);
                 dic.AddItem("@SchoolClassId", iSchoolClassId);
+                dic.AddItem("@HighEducationInfo", model.EducationInfo.HighEducationInfo);
                 
+                if (schoolExitYear != 0)
+                {
+                    dic.AddItem("@SchoolExitYear", schoolExitYear);
+                }
+                else
+                    dic.AddItem("@SchoolExitYear", DBNull.Value);
+
                 if (iRegStage < 5)
                 {
                     qAdditionalString += " RegistrationStage=@RegistrationStage, ";
@@ -340,6 +353,7 @@ namespace OlympOnline.Controllers
                 }
 
                 string query = string.Format("UPDATE Person SET SchoolTypeId=@SchoolTypeId, SchoolName=@SchoolName, SchoolNum=@SchoolNum, SchoolCountryId=@CountryEducId, " +
+                    "HighEducationInfo = @HighEducationInfo, SchoolExitYear = @SchoolExitYear," +
                     "SchoolRegionId=@SchoolRegionId, SchoolClassId=@SchoolClassId, {0} SchoolCity=@SchoolCity WHERE Id=@Id", qAdditionalString);
 
                 Util.AbitDB.ExecuteQuery(query, dic);

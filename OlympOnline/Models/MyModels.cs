@@ -125,6 +125,9 @@ namespace OlympOnline.Models
         public List<SelectListItem> CountryList { get; set; }
         public List<SelectListItem> RegionList { get; set; }
         public List<SelectListItem> SchoolClassList { get; set; }
+
+        public string HighEducationInfo { get; set; }
+        public string SchoolExitYear { get; set; }
     }
 
     public class AdditionalInfoPerson

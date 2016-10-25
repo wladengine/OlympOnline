@@ -865,6 +865,7 @@ namespace OlympOnline.Controllers
                 return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
 
             string query = @"SELECT DISTINCT SchoolClass_test.Id AS Id, SchoolClass_test.Name AS Name , SchoolTypeCategory.Name as SchoolTypeCategoryName
+                  ,  SchoolTypeCategory.HighEducationInfoIsVisible
                   FROM SchoolClass_test 
                   INNER JOIN SchoolType_test ON SchoolType_test.SchoolTypeCategoryId = SchoolClass_test.SchoolTypeCategoryId 
                   INNER JOIN SchoolTypeCategory on SchoolTypeCategory.Id = SchoolType_test.SchoolTypeCategoryId
@@ -880,7 +881,7 @@ namespace OlympOnline.Controllers
                 var lst = (from DataRow rw in tbl.Rows
                            select new { Id = rw["Id"].ToString(), Name = rw["Name"].ToString() }).ToList();
 
-                return Json(new { IsOk = true, List = lst, LabelName = (tbl.Rows.Count > 0) ? tbl.Rows[0].Field<string>("SchoolTypeCategoryName") : "Класс" });
+                return Json(new { IsOk = true, List = lst, LabelName = (tbl.Rows.Count > 0) ? tbl.Rows[0].Field<string>("SchoolTypeCategoryName") : "Класс", HighEducationInfoIsVisible = (tbl.Rows.Count > 0) ? tbl.Rows[0].Field<bool>("HighEducationInfoIsVisible") : false });
             }
             catch
             {

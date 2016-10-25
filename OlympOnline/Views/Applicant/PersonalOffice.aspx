@@ -915,8 +915,8 @@
             function CheckForm() {
                 var ret = true;
                 if (!CheckSchoolName()) { ret = false; }
-                if (!CheckSchoolNumber()) { ret = false; }
-                //if (!CheckSchoolExitYear()) { ret = false; }
+                if (!CheckSchoolNumber()) { ret = false; } 
+                if (!CheckSchoolExitYear()) { ret = false; }
                // if (!CheckAttestatRegion()) { ret = false; }
                 return ret;
             }
@@ -937,6 +937,14 @@
                         } 
                         $('#EducationInfo_SchoolClassId').html(options);
                         $label.text(data.LabelName);
+                        if (data.HighEducationInfoIsVisible)
+                        {
+                            $('#HighEducationInfo').show();
+                        }
+                        else
+                        {
+                            $('#HighEducationInfo').hide();
+                        }
                     }
                     else { 
                     }
@@ -980,6 +988,23 @@
                         $('#EducationInfo_SchoolNumber').removeClass('input-validation-error');
                         $('#EducationInfo_SchoolNumber_Message').hide();
                     }
+                }
+                return ret;
+            }
+            function CheckSchoolExitYear() {
+                var ret = true;
+                $('#EducationInfo_SchoolExitYear').removeClass('input-validation-error');
+                $('#SchoolExitYear_Message').hide();
+                if ($('#EducationInfo_SchoolExitYear').val() == '') {
+                }
+                else { 
+                    var regex = /^\d{4}$/i;
+                    var val = $('#EducationInfo_SchoolExitYear').val();
+                    if (!regex.test(val)) {
+                        $('#EducationInfo_SchoolExitYear').addClass('input-validation-error');
+                        $('#SchoolExitYear_MessageFormat').show();
+                        ret = false;
+                    } 
                 }
                 return ret;
             }
@@ -1064,7 +1089,19 @@
                         <div id="CountryMessage" class="message info" style="display:none; border-collapse:collapse;">
                             Пожалуйста, укажите в названии школы страну, где Вы обучались (например, "Oxford, UK", "Oberwolfach, Germany")
                         </div>
-                        
+                        <div id ="HighEducationInfo">
+                            <div class="clearfix">
+                                 <%= Html.LabelFor(x => x.EducationInfo.SchoolCity, "Факультет/специальность/направление обучения") %>
+                            <%= Html.TextBoxFor(x => x.EducationInfo.HighEducationInfo) %>
+                            </div> 
+                            <div class="clearfix">
+                                <%= Html.LabelFor(x => x.EducationInfo.SchoolCity, "Год выпуска") %>
+                                <%= Html.TextBoxFor(x => x.EducationInfo.SchoolExitYear) %>
+                                <span id="SchoolExitYear_MessageFormat" class="Red" style="display:none; border-collapse:collapse;"> 
+                                    Некорректное значение
+                                </span>
+                            </div> 
+                        </div>
                         </fieldset>
                         <hr />
                         <div class="clearfix">
