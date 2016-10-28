@@ -939,11 +939,13 @@
                         $label.text(data.LabelName);
                         if (data.HighEducationInfoIsVisible)
                         {
-                            $('#HighEducationInfo').show();
+                            $('#HighEducationInfo').show(100);
+                            $('#_SchoolNumber').hide(100);
                         }
                         else
                         {
-                            $('#HighEducationInfo').hide();
+                            $('#HighEducationInfo').hide(100);
+                            $('#_SchoolNumber').show(100);
                         }
                     }
                     else { 
