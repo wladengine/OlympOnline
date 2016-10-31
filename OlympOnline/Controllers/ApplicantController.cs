@@ -119,7 +119,8 @@ namespace OlympOnline.Controllers
                 model.EducationInfo.CountryEducId = (tbl.Rows[0].Field<int?>("SchoolCountryId") ?? 1).ToString();
                 model.EducationInfo.RegionEducId = (tbl.Rows[0].Field<int?>("SchoolRegionId") ?? 1).ToString();
                 model.EducationInfo.SchoolClassId = (tbl.Rows[0].Field<int?>("SchoolClassId") ?? 1).ToString();
-                
+
+                model.EducationInfo.HighEducationInfo = Server.HtmlDecode(tbl.Rows[0].Field<string>("HighEducationInfo"));
                 model.EducationInfo.SchoolExitYear = (tbl.Rows[0].Field<int?>("SchoolExitYear")).ToString();
             }
             else if (model.Stage == 5)
