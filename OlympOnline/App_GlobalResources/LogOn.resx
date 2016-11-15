@@ -159,4 +159,10 @@
   <data name="ValidationSummaryWrongUsernamePassword" xml:space="preserve">
     <value>Неверное имя пользователя или пароль</value>
   </data>
+  <data name="HeaderEmailConfirm" xml:space="preserve">
+    <value>Подтвердите выбранный email для обратной связи</value>
+  </data>
+  <data name="HeaderEmailConfirmOrChange" xml:space="preserve">
+    <value>Потвердите указанный или укажите другой email для связи:</value>
+  </data>
 </root>

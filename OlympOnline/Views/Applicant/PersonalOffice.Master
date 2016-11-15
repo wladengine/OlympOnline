@@ -150,7 +150,7 @@
                         <%= GetGlobalResourceObject("Common", "SpbuHeaderAddress") %>
                     </div>
                 </div>
-                <br /><h1><a href="../../" style=" text-decoration: none; color:White;"><%= GetGlobalResourceObject("Common", "PersonalOfficeHeaderName") %></a></h1><br />
+                <br /><br /><h1><a href="../../" style=" text-decoration: none; color:White;"><%= GetGlobalResourceObject("Common", "PersonalOfficeHeaderName") %></a></h1><br />
                 <div id="main-nav">
                 </div>
             </div>

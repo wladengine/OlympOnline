@@ -56,6 +56,12 @@ namespace OlympOnline.Models
         
         public bool RememberMe { get; set; }
     }
+    public class LogOnModelST
+    {
+        [Required]
+        public string EmailToConfirm { get; set; }
+        public string UserID { get; set; }
+    }
     public class LogOnForeignModel
     {
         [Required]

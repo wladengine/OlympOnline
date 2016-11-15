@@ -61,7 +61,7 @@ namespace OlympOnline.Controllers
                 string email = model.Email;
                 string remixPwd = Util.MD5Str(model.Password);
 
-                string query = "SELECT [User].Id, [User].SID, IsApproved, Ticket FROM [User] LEFT JOIN BBUser ON BBUser.UserId=[User].Id LEFT JOIN AuthTicket ON AuthTicket.UserId=[User].Id WHERE [User].Password=@Password AND (/* [User].Email=@Email OR */ BBUser.BBLogin=@Email)";
+                string query = "SELECT [User].Id, [User].SID, [User].Email, IsApproved, Ticket FROM [User] LEFT JOIN BBUser ON BBUser.UserId=[User].Id LEFT JOIN AuthTicket ON AuthTicket.UserId=[User].Id WHERE [User].Password=@Password AND (/* [User].Email=@Email OR */ BBUser.BBLogin=@Email)";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@Password", remixPwd);
                 dic.Add("@Email", email);
@@ -73,7 +73,8 @@ namespace OlympOnline.Controllers
                                Id = rw.Field<Guid>("Id"),
                                SID = rw.Field<string>("SID"),
                                IsApproved = rw.Field<bool>("IsApproved"),
-                               Ticket = rw.Field<string>("Ticket")
+                               Ticket = rw.Field<string>("Ticket"),
+                               Email = rw.Field<string>("Email")
                            }).FirstOrDefault();
                 if (Usr != null)
                 {
@@ -108,6 +109,55 @@ namespace OlympOnline.Controllers
                     return RedirectToAction("Main", "Applicant");
                     
                 }
+                else if (model.Email.StartsWith("st", StringComparison.OrdinalIgnoreCase) && !model.Email.Contains("@") && !model.Email.StartsWith("ol", StringComparison.OrdinalIgnoreCase)) //если это логин AD
+                {
+                    bool isValid = Util.GetIsValidAccountInActiveDirectory(model.Email, model.Password);
+                    if (isValid)
+                    {
+                        Guid UserId = Util.CheckOrCreatePersonFromAccountInActiveDirectory(model.Email);
+
+                        dic.Clear();
+                        dic.Add("@UserId", UserId);
+
+                        query = "SELECT IsApproved FROM [User] WHERE Id=@UserId";
+                        bool IsApproved = (bool)Util.AbitDB.GetValue(query, dic);
+                        
+                        if (!IsApproved)
+                        {
+                            query = "SELECT [Email] FROM [User] WHERE Id=@UserId";
+                            string Email = Util.AbitDB.GetStringValue(query, dic);
+                            return View("ConfirmEmailST", new LogOnModelST() { UserID = UserId.ToString(), EmailToConfirm = Email });
+                        }
+
+                        query = "SELECT AuthTicket.Ticket FROM AuthTicket WHERE AuthTicket.UserId=@UserId";
+                        string Ticket = Util.AbitDB.GetStringValue(query, dic);
+                        if (!string.IsNullOrEmpty(Ticket))
+                        {
+                            dic.Clear();
+                            dic.Add("@Ticket", Util.MD5Str(remixPwd + DateTime.Now.ToString()));
+                            dic.Add("@UserId", UserId);
+                            query = "UPDATE AuthTicket SET Ticket=@Ticket WHERE UserId=@UserId";
+                            Util.AbitDB.ExecuteQuery(query, dic);
+                        }
+                        else
+                        {
+                            dic.Clear();
+                            dic.Add("@Ticket", Util.MD5Str(remixPwd + DateTime.Now.ToString()));
+                            dic.Add("@UserId", UserId);
+                            query = "INSERT INTO AuthTicket (Ticket, UserId) VALUES (@Ticket, @UserId)";
+                            Util.AbitDB.ExecuteQuery(query, dic);
+                        }
+
+                        Response.Cookies.SetAuthCookies(UserId, usrTime, model.RememberMe);
+                        FormsAuthentication.SetAuthCookie(model.Email, model.RememberMe);
+
+                        return RedirectToAction("Main", "Applicant");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", Resources.LogOn.ValidationSummaryWrongUsernamePassword);
+                    }
+                }
                 else
                 {
                     ModelState.AddModelError("", Resources.LogOn.ValidationSummaryWrongUsernamePassword);
@@ -116,6 +166,50 @@ namespace OlympOnline.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+        [HttpPost]
+        public ActionResult LogOnAndConfirmST(LogOnModelST model)
+        {
+            DateTime usrTime = DateTime.Now;
+            try
+            {
+                usrTime = Convert.ToDateTime(Request.Form["time"], System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat);
+            }
+            catch { }
+            string email = model.EmailToConfirm;
+            string remixEmail = Util.MD5Str(email);
+            string sUserId = model.UserID;
+            Guid UserId = new Guid(sUserId);
+
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("@UserId", UserId);
+            string query = "UPDATE [User] SET IsApproved=1 WHERE Id = @UserId";
+            Util.AbitDB.ExecuteQuery(query, dic);
+
+            query = "SELECT Ticket FROM AuthTicket WHERE UserId = @UserId";
+            string Ticket = Util.AbitDB.GetStringValue(query, dic);
+
+            if (!string.IsNullOrEmpty(Ticket))
+            {
+                dic.Clear();
+                dic.Add("@Ticket", Util.MD5Str(remixEmail + DateTime.Now.ToString()));
+                dic.Add("@UserId", UserId);
+                query = "UPDATE AuthTicket SET Ticket=@Ticket WHERE UserId=@UserId";
+                Util.AbitDB.ExecuteQuery(query, dic);
+            }
+            else
+            {
+                dic.Clear();
+                dic.Add("@Ticket", Util.MD5Str(remixEmail + DateTime.Now.ToString()));
+                dic.Add("@UserId", UserId);
+                query = "INSERT INTO AuthTicket (Ticket, UserId) VALUES (@Ticket, @UserId)";
+                Util.AbitDB.ExecuteQuery(query, dic);
+            }
+
+            Response.Cookies.SetAuthCookies(UserId, usrTime, false);
+            FormsAuthentication.SetAuthCookie(model.EmailToConfirm, false);
+
+            return RedirectToAction("Main", "Applicant");
         }
         
         public ActionResult LogOff()
@@ -864,18 +958,18 @@ namespace OlympOnline.Controllers
             if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
                 return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
 
-            string query = @"SELECT DISTINCT SchoolClass_test.Id AS Id, SchoolClass_test.Name AS Name , SchoolTypeCategory.Name as SchoolTypeCategoryName
+            string query = @"SELECT DISTINCT SchoolClass.Id AS Id, SchoolClass.Name AS Name , SchoolTypeCategory.Name as SchoolTypeCategoryName
                   ,  SchoolTypeCategory.HighEducationInfoIsVisible
-                  FROM SchoolClass_test 
-                  INNER JOIN SchoolType_test ON SchoolType_test.SchoolTypeCategoryId = SchoolClass_test.SchoolTypeCategoryId 
-                  INNER JOIN SchoolTypeCategory on SchoolTypeCategory.Id = SchoolType_test.SchoolTypeCategoryId
-                  WHERE SchoolType_test.Id=@SchoolTypeId";
+                  FROM SchoolClass 
+                  INNER JOIN SchoolType ON SchoolType.SchoolTypeCategoryId = SchoolClass.SchoolTypeCategoryId 
+                  INNER JOIN SchoolTypeCategory on SchoolTypeCategory.Id = SchoolType.SchoolTypeCategoryId
+                  WHERE SchoolType.Id=@SchoolTypeId";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@SchoolTypeId", ischoolid); 
 
             try
             {
-                string obderby = " ORDER BY SchoolClass_test.Id";
+                string obderby = " ORDER BY SchoolClass.Id";
                 DataTable tbl = Util.AbitDB.GetDataTable(query + obderby, dic);
 
                 var lst = (from DataRow rw in tbl.Rows

@@ -106,6 +106,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Подтвердите выбранный email для обратной связи.
+        /// </summary>
+        internal static string HeaderEmailConfirm {
+            get {
+                return ResourceManager.GetString("HeaderEmailConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Потвердите указанный или укажите другой email для связи:.
+        /// </summary>
+        internal static string HeaderEmailConfirmOrChange {
+            get {
+                return ResourceManager.GetString("HeaderEmailConfirmOrChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Вход на сайт.
         /// </summary>
         internal static string HeaderLogOn {

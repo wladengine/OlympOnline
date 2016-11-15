@@ -63,7 +63,7 @@ namespace OlympOnline.Controllers
             Dictionary<string, object> dic = new Dictionary<string, object>() { { "@x", 1 } };
             DataTable tbl = new DataTable();
 
-            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolType_test"), dic);
+            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolType"), dic);
             SchoolTypesAll =
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);
@@ -78,7 +78,7 @@ namespace OlympOnline.Controllers
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);
 
-            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolClass_test"), dic);
+            tbl = _abitDB.GetDataTable(string.Format(query, "SchoolClass"), dic);
             SchoolClassesAll =
                 (from DataRow rw in tbl.Rows
                  select new { Id = rw.Field<int>("Id"), Name = rw.Field<string>("Name") }).ToDictionary(x => x.Id, x => x.Name);
@@ -187,6 +187,45 @@ namespace OlympOnline.Controllers
             dic.Add("@Id", id);
             dic.Add("@BBPassword", password);
             dic.Add("@Email", email);
+            AbitDB.ExecuteQuery(query, dic);
+
+            return id;
+        }
+
+        public static Guid CreateNewUserFromAD(string password, string email, string ST)
+        {
+            Guid id = Guid.NewGuid();
+            string sid = MD5Str(id.ToByteArray());
+            string md5pwd = MD5Str(password);
+
+            string query = "INSERT INTO [User] (Id, Password, SID, Email, ST, IsApproved, EmailTicket) VALUES (@Id, @Password, @SID, @Email, @ST, @IsApproved, @EmailTicket)";
+            Dictionary<string, object> dic = new Dictionary<string, object>()
+            {
+                { "@Id", id },
+                { "@Password", md5pwd },
+                { "@SID", sid },
+                { "@ST", ST },
+                { "@Email", email },
+                { "@IsApproved", false },
+                { "@EmailTicket", Guid.NewGuid().ToString("N") },
+            };
+            AbitDB.ExecuteQuery(query, dic);
+
+            query = "INSERT INTO AuthTicket (UserId, Ticket) VALUES (@UserId, @Ticket)";
+            dic.Clear();
+            dic.Add("@UserId", id);
+            dic.Add("@Ticket", Guid.NewGuid().ToString("N"));
+            AbitDB.ExecuteQuery(query, dic);
+
+            query = "INSERT INTO BBUser (Id, UserId, BBLogin, BBPassword, Email) VALUES (@Id, @Id, @BBLogin, @BBPassword, @Email)";
+            dic.Clear();
+            dic.Add("@Id", id);
+            dic.Add("@BBLogin", ST);
+            dic.Add("@BBPassword", password);
+            dic.Add("@Email", email);
+            AbitDB.ExecuteQuery(query, dic);
+
+            query = "UPDATE BBUser SET BBLogin=@BBLogin WHERE Id=@Id";
             AbitDB.ExecuteQuery(query, dic);
 
             return id;
