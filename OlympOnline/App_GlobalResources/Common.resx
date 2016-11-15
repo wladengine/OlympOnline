@@ -124,7 +124,11 @@
     <value>Удалить</value>
   </data>
   <data name="HeaderTelephoneAddress" xml:space="preserve">
-    <value>8 (812) 328-94-55</value>
+    <value>&lt;b&gt;Поддержка Олимпиады школьников СПбГУ: &lt;/b&gt;
+&lt;br/&gt;тел.: +7 812 3636063
+&lt;br/&gt;почта: olymp@priem.pu.ru / olympiada.spbu.ru
+&lt;br/&gt;&lt;b&gt;Поддержка Олимпиады для студентов:&lt;/b&gt;
+&lt;br/&gt;почта: psrs@spbu.ru / psrs.spbu.ru</value>
   </data>
   <data name="LanguageSelector" xml:space="preserve">
     <value>English Version</value>
@@ -148,7 +152,7 @@
     <value>Сайт СПбГУ</value>
   </data>
   <data name="SpbuHeaderAddress" xml:space="preserve">
-    <value>Университетская наб., д.9</value>
+    <value />
   </data>
   <data name="Spbu_Title" xml:space="preserve">
     <value>Санкт-Петербургский Государственный Университет</value>
