@@ -270,15 +270,16 @@ namespace OlympOnline.Controllers
             MemoryStream ms = new MemoryStream();
 
             string query = @"SELECT 
-Surname, Name, SecondName, BirthDate, SchoolName, SchoolNum, 
-SchoolClass, Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
+Surname, Name, SecondName, BirthDate, 
+SchoolName, SchoolNum, SchoolClassId, SchoolClass, SchoolExitYear, HighEducationInfo,
+Code, extPerson.City, Street, House, Korpus, Flat, IsCountryside,
 [Email], Phone, extPerson.Barcode, extApplication.City AS OlympCity, 
 extApplication.Subject, extApplication.Date AS OlympDate,
 extApplication.Stage, 
 PassportSeries, PassportNumber, PassportDate, PassportTypeId, PassportAuthor,
 ParentName, ParentAdress,
 IsSirota, IsDisabled, 
-Teacher
+Teacher, SchoolTypeCategoryId
 FROM extApplication 
 INNER JOIN extPerson ON extPerson.Id = extApplication.PersonId 
 LEFT JOIN Teachers ON extApplication.PersonId = Teachers.PersonId and extApplication.OlympiadId  = Teachers.OlympiadId
@@ -301,6 +302,9 @@ WHERE extApplication.Id=@Id";
                 SchoolName = rw["SchoolName"].ToString(),
                 SchoolNum = rw["SchoolNum"].ToString(),
                 SchoolClass = rw["SchoolClass"].ToString(),
+                SchoolClassId = rw.Field<int>("SchoolClassId"),
+                SchoolExitYear = rw["SchoolExitYear"] == null ? "" : rw["SchoolExitYear"].ToString(),
+                HighEducationInfo = rw.Field<string>("HighEducationInfo"),
                 Code = rw["Code"].ToString(),
                 City = rw["City"].ToString(),
                 Street = rw["Street"].ToString(),
@@ -324,10 +328,14 @@ WHERE extApplication.Id=@Id";
                 ParentName = rw.Field<string>("ParentName"),
                 ParentAdress = rw.Field<string>("ParentAdress"),
                 IsSirota = rw.Field<bool>("IsSirota"),
-                IsDisabled = rw.Field<bool>("IsDisabled")
+                IsDisabled = rw.Field<bool>("IsDisabled"),
+                SchoolTypeCategoryId = rw.Field<int>("SchoolTypeCategoryId")
             };
 
+            
             string dotName = "Application_2016.pdf";
+            if (person.SchoolTypeCategoryId == 2)
+                dotName = "Application_PSRS.pdf";
 
             byte[] templateBytes;
             using (FileStream fs = new FileStream(dirPath + dotName, FileMode.Open, FileAccess.Read))
@@ -352,80 +360,124 @@ PdfWriter.AllowPrinting);
             img.SetAbsolutePosition(485, 785);
             cb.AddImage(img);
 
-            string Surname = person.Surname.ToUpper();//GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper(); 
-            string Name = person.Name.ToUpper();//; GetDoubleSpacedString(person.Name.ToUpper())
-            string SecondName = person.SecondName.ToUpper(); //person.SecondName.ToUpper();//GetDoubleSpacedString(person.SecondName.ToUpper());
+            if (person.SchoolTypeCategoryId == 2)
+            {
+                acrFlds.SetField("Surname", person.Surname);
+                acrFlds.SetField("Name", person.Name);
+                acrFlds.SetField("SecondName", person.SecondName);
 
-            for (int i = 0; i < Surname.Length; i++)
-                acrFlds.SetField("Surname" + i.ToString(), Surname[i].ToString());
-            for (int i = 0; i < Name.Length; i++)
-                acrFlds.SetField("Name" + i.ToString() , Name[i].ToString());
-            
-            for (int i = 0; i < SecondName.Length; i++)
-                acrFlds.SetField("SecondName" + i.ToString() , SecondName[i].ToString());
+                acrFlds.SetField("BirthDate", person.BirthDate.Date.ToString("dd.MM.yyyy"));
 
-            string BirthDate_Day = person.BirthDate.Day.ToString("D2");// GetSpacedString(person.BirthDate.Day.ToString("D2"));
-            string BirthDate_Year = person.BirthDate.Year.ToString();// GetSpacedString(person.BirthDate.Year.ToString());
-            string BirthDate_Month = person.BirthDate.Month.ToString("D2");// GetSpacedString(person.BirthDate.Month.ToString("D2"));
+                string Passport = person.PassportSeries + " " + person.PassportNumber + " выдан " + person.PassportAuthor + " " + person.PassportDate.Date.ToString("dd.MM.yyyy");
+                string[] splitStr = GetSplittedStrings(Passport, 50, 70, 2);
+                acrFlds.SetField("Passport1", splitStr[0]);
+                acrFlds.SetField("Passport2", splitStr[1]);
 
-            for (int i = 0; i < BirthDate_Day.Length; i++)
-                acrFlds.SetField("BirthDate_Day" + i.ToString(), BirthDate_Day[i].ToString());
-            for (int i = 0; i < BirthDate_Year.Length; i++)
-                acrFlds.SetField("BirthDate_Year"+i.ToString(), BirthDate_Year[i].ToString());
-            for (int i = 0; i < BirthDate_Month.Length; i++)
-                acrFlds.SetField("BirthDate_Month" + i.ToString(), BirthDate_Month[i].ToString());
+                string address = person.Code + (string.IsNullOrEmpty(person.Code) ? "" : " ") + person.City + " " + person.Street.Replace("улица", "ул.").Replace("проспект", "пр.")
+                    + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
+                splitStr = GetSplittedStrings(address, 75, 60, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("Address" + i, splitStr[i - 1]);
 
-            string address = person.Code + (string.IsNullOrEmpty(person.Code) ? "" : " ") + person.City + " " + person.Street.Replace("улица", "ул.").Replace("проспект", "пр.")
-                + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
-            string[] splitStr = GetSplittedStrings(address, 75, 60, 2);
-            for (int i = 1; i <= 2; i++)
-                acrFlds.SetField("Address" + i, splitStr[i - 1]);
+                acrFlds.SetField("Subject", person.Subject);
+                acrFlds.SetField("Email", person.Email);
+                acrFlds.SetField("Phone", person.Phone);
 
-            acrFlds.SetField("ParentName", person.ParentName);
-            splitStr = GetSplittedStrings(person.ParentAdress, 50, 70, 2);
-            for (int i = 1; i <= 2; i++)
-                acrFlds.SetField("ParentAdress" + i, splitStr[i - 1]);
+                splitStr = GetSplittedStrings(person.SchoolName, 75, 60, 2);
+                acrFlds.SetField("SchoolName1", splitStr[0]);
+                acrFlds.SetField("SchoolName2", splitStr[1]);
 
-            acrFlds.SetField("PersonName", Surname + " " + Name + " " + SecondName);
-            splitStr = GetSplittedStrings(address, 50, 70, 2);
-            for (int i = 1; i <= 2; i++)
-                acrFlds.SetField("PersonAdress" + i, splitStr[i - 1]);
+                switch (person.SchoolClassId)
+                {
+                    case 8: acrFlds.SetField("chbStudyLevel1", "1"); break;
+                    case 9: acrFlds.SetField("chbStudyLevel2", "1"); break;
+                    case 10: acrFlds.SetField("chbStudyLevel3", "1"); break;
+                }
 
-            acrFlds.SetField("SchoolName", person.SchoolName);
-            acrFlds.SetField("SchoolNum", person.SchoolNum);
-            acrFlds.SetField("SchoolClass", person.SchoolClass); 
+                acrFlds.SetField("SchoolExitYear", person.SchoolExitYear);
+                acrFlds.SetField("HE", person.HighEducationInfo);
+            }
+            else if (person.SchoolTypeCategoryId == 1)
+            {
 
-            acrFlds.SetField("OlympSubject", person.OlympDate + " " + person.Subject);
-            acrFlds.SetField("OlympCity", person.OlympCity);
+                string Surname = person.Surname.ToUpper();//GetDoubleSpacedString(person.Surname.ToUpper());//person.Surname.ToUpper(); 
+                string Name = person.Name.ToUpper();//; GetDoubleSpacedString(person.Name.ToUpper())
+                string SecondName = person.SecondName.ToUpper(); //person.SecondName.ToUpper();//GetDoubleSpacedString(person.SecondName.ToUpper());
 
-            acrFlds.SetField("OlympSubject_1", person.Subject); // родительный падеж не помешал бы
+                for (int i = 0; i < Surname.Length; i++)
+                    acrFlds.SetField("Surname" + i.ToString(), Surname[i].ToString());
+                for (int i = 0; i < Name.Length; i++)
+                    acrFlds.SetField("Name" + i.ToString(), Name[i].ToString());
 
-            for (int i = 0; i < person.Phone.Length; i++)
-                acrFlds.SetField("Phone" + i.ToString(), person.Phone[i].ToString());
-            for (int i = 0; i < person.Email.Length; i++)
-                 acrFlds.SetField("Email"+i.ToString(), person.Email[i].ToString());
-            for (int i = 0; i < person.TeacherName.Length; i++)
-                acrFlds.SetField("TeacherName" + i.ToString(), person.TeacherName[i].ToString().ToUpper());
+                for (int i = 0; i < SecondName.Length; i++)
+                    acrFlds.SetField("SecondName" + i.ToString(), SecondName[i].ToString());
 
-            if (person.IsCountryside)
-                acrFlds.SetField("chbIsCountryside", "1");
+                string BirthDate_Day = person.BirthDate.Day.ToString("D2");// GetSpacedString(person.BirthDate.Day.ToString("D2"));
+                string BirthDate_Year = person.BirthDate.Year.ToString();// GetSpacedString(person.BirthDate.Year.ToString());
+                string BirthDate_Month = person.BirthDate.Month.ToString("D2");// GetSpacedString(person.BirthDate.Month.ToString("D2"));
 
-            if (person.IsSirota)
-                acrFlds.SetField("chbIsSirota", "1");
+                for (int i = 0; i < BirthDate_Day.Length; i++)
+                    acrFlds.SetField("BirthDate_Day" + i.ToString(), BirthDate_Day[i].ToString());
+                for (int i = 0; i < BirthDate_Year.Length; i++)
+                    acrFlds.SetField("BirthDate_Year" + i.ToString(), BirthDate_Year[i].ToString());
+                for (int i = 0; i < BirthDate_Month.Length; i++)
+                    acrFlds.SetField("BirthDate_Month" + i.ToString(), BirthDate_Month[i].ToString());
 
-            if (person.IsDisabled)
-                acrFlds.SetField("chbIsDisabled", "1");
+                string address = person.Code + (string.IsNullOrEmpty(person.Code) ? "" : " ") + person.City + " " + person.Street.Replace("улица", "ул.").Replace("проспект", "пр.")
+                    + " " + person.House + " " + person.Korpus + (string.IsNullOrEmpty(person.Korpus) ? "" : " кв. ") + person.Flat.Replace("квартира", "").Replace("кв", "");
+                string[] splitStr = GetSplittedStrings(address, 75, 60, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("Address" + i, splitStr[i - 1]);
 
-            if (person.IsPassport)
-                acrFlds.SetField("chbIsPassport", "1");
-            else
-                acrFlds.SetField("chbIsSvidetelstvo", "1");
+                acrFlds.SetField("ParentName", person.ParentName);
+                splitStr = GetSplittedStrings(person.ParentAdress, 50, 70, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("ParentAdress" + i, splitStr[i - 1]);
 
-            for (int i = 0; i < person.PassportSeries.Length; i++)
-                acrFlds.SetField("PassportSeria" + i.ToString(), person.PassportSeries[i].ToString());
-            for (int i = 0; i < person.PassportNumber.Length; i++)
-                acrFlds.SetField("PassportNumber" + i.ToString(), person.PassportNumber[i].ToString());
-            acrFlds.SetField("PassportAuthor", "                   " + person.PassportAuthor + ", " + person.PassportDate.ToShortDateString());
+                acrFlds.SetField("PersonName", Surname + " " + Name + " " + SecondName);
+                splitStr = GetSplittedStrings(address, 50, 70, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("PersonAdress" + i, splitStr[i - 1]);
+
+                acrFlds.SetField("SchoolName", person.SchoolName);
+                acrFlds.SetField("SchoolNum", person.SchoolNum);
+                acrFlds.SetField("SchoolClass", person.SchoolClass);
+
+                acrFlds.SetField("OlympSubject", person.OlympDate + " " + person.Subject);
+                acrFlds.SetField("OlympCity", person.OlympCity);
+
+                acrFlds.SetField("OlympSubject_1", person.Subject); // родительный падеж не помешал бы
+
+                for (int i = 0; i < person.Phone.Length; i++)
+                    acrFlds.SetField("Phone" + i.ToString(), person.Phone[i].ToString());
+                for (int i = 0; i < person.Email.Length; i++)
+                    acrFlds.SetField("Email" + i.ToString(), person.Email[i].ToString());
+                if (!string.IsNullOrEmpty(person.TeacherName))
+                {
+                    for (int i = 0; i < person.TeacherName.Length; i++)
+                        acrFlds.SetField("TeacherName" + i.ToString(), person.TeacherName[i].ToString().ToUpper());
+                }
+
+                if (person.IsCountryside)
+                    acrFlds.SetField("chbIsCountryside", "1");
+
+                if (person.IsSirota)
+                    acrFlds.SetField("chbIsSirota", "1");
+
+                if (person.IsDisabled)
+                    acrFlds.SetField("chbIsDisabled", "1");
+
+                if (person.IsPassport)
+                    acrFlds.SetField("chbIsPassport", "1");
+                else
+                    acrFlds.SetField("chbIsSvidetelstvo", "1");
+
+                for (int i = 0; i < person.PassportSeries.Length; i++)
+                    acrFlds.SetField("PassportSeria" + i.ToString(), person.PassportSeries[i].ToString());
+                for (int i = 0; i < person.PassportNumber.Length; i++)
+                    acrFlds.SetField("PassportNumber" + i.ToString(), person.PassportNumber[i].ToString());
+                acrFlds.SetField("PassportAuthor", "                   " + person.PassportAuthor + ", " + person.PassportDate.ToShortDateString());
+            }
 
             pdfStm.FormFlattening = true;
             pdfStm.Close();

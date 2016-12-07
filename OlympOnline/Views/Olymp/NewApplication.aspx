@@ -209,10 +209,10 @@
     <p id="ApplicationInfo" class="message info" style="border-collapse:collapse; display:none;">
     </p>
     
-    <p id = "TeacherInfo" class="message info" style="border-collapse:collapse; display:none;">
+    <%--<p id = "TeacherInfo" class="message info" style="border-collapse:collapse; display:none;">
         ФИО преподавателя, подготовившего участника:<br />
         <input name = "teacherName" type="text" style="width: 500px;"/>
-    </p>
+    </p>--%>
 
     <p id="FinishBtn" style=" display:none;">
         <input id="Submit" type="submit" value="Подать заявление" class="button button-green"/>

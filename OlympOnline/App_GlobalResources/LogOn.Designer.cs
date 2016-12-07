@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Логин (ol16XXXXX).
+        ///   Looks up a localized string similar to Логин.
         /// </summary>
         internal static string Email {
             get {

@@ -124,6 +124,9 @@
     <value>Удалить</value>
   </data>
   <data name="HeaderTelephoneAddress" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HeaderTelephoneAddress_old" xml:space="preserve">
     <value>&lt;b&gt;Поддержка Олимпиады школьников СПбГУ: &lt;/b&gt;
 &lt;br/&gt;тел.: +7 812 3636063
 &lt;br/&gt;почта: olymp@priem.pu.ru / olympiada.spbu.ru

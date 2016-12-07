@@ -193,6 +193,18 @@
                             <ul>
                                 <li><a target="_blank" href="https://olympiada.spbu.ru/index.php/olimpiada-shkolnikov/registration-instruction">Инструкция по регистрации</a></li>
                                 <li><a target="_blank" href="https://olympiada.spbu.ru/data/oly/2016/oly_graf_ozakl_regiony_2016.htm">График проведения заочной формы</a></li>
+                                <li><a target="_blank" href="https://olympiada.spbu.ru/index.php/kontakty-olimpiad">Контакты олимпиад</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="accordion">
+                        <h2 class="current">Информация для участников Открытой Олимпиады СПбГУ среди студентов и молодых специалистов</h2>
+                        <div class="pane" style="display:block">
+                            <ul>
+                                <li><a target="_blank" href="https://olymp.spbu.ru/data/Grafik_olimpiady.pdf">График проведения олимпиады</a></li>
+                                <li><a target="_blank" href="http://psrs.spbu.ru/images/files/Instruktsia_po_registratsii.pdf">Инструкция по регистрации</a></li>
+                                <li><a target="_blank" href="http://psrs.spbu.ru/">Контакты</a></li>
                             </ul>
                         </div>
                     </div>
@@ -206,7 +218,11 @@
         <div id="footer-inner">
             <p class="wrapper">
                 <span style="float: right;">
-                <a href="http://spbu.ru/"><%= GetGlobalResourceObject("Common", "SiteSpbu_Name") %></a> | <a href="http://abiturient.spbu.ru/"><%= GetGlobalResourceObject("Common", "AbiturientSpbuName")%></a></span>
+                <a href="http://spbu.ru/"><%= GetGlobalResourceObject("Common", "SiteSpbu_Name") %></a> 
+                    | <a href="http://olympiada.spbu.ru/">Сайт Олимпиады школьников СПбГУ</a>
+                    
+                    | <a href="http://abiturient.spbu.ru/"><%= GetGlobalResourceObject("Common", "AbiturientSpbuName")%></a>
+                </span>
                 <%= GetGlobalResourceObject("Common", "Spbu_Title") %>
             </p>
         </div>

@@ -42,7 +42,7 @@ namespace OlympOnline.Controllers
         }
         public static List<SelectListItem> GetRegionList()
         {
-            string query = "SELECT Id, Name FROM Region";
+            string query = "SELECT Id, Name FROM Region ORDER BY Level DESC, Name";
             DataTable tbl = Util.AbitDB.GetDataTable(query, null);
             return (from DataRow rw in tbl.Rows
                     select new SelectListItem()

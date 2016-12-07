@@ -152,13 +152,13 @@
     </tr>
 
 </table>
-<p id = "TeacherInfo" class="message info" style="border-collapse:collapse;">
+<%--<p id = "TeacherInfo" class="message info" style="border-collapse:collapse;">
     ФИО преподавателя, подготовившего участника:<br /> 
     <%= Html.TextBoxFor(x => x.TeacherName, new Dictionary<string, object>() {{ "style", "min-width:500px;" }})%>
     <input type="button" value ="Сохранить" onclick = "UpdateTeacherName()"/>
     <br />
     <span id="TeacherName_Message" style="display:none;"></span>
-</p>
+</p>--%>
 <br />
 <% if (Model.Stage == "Отборочный" && !Model.IsFullTime) { %>
    <div class="message info">

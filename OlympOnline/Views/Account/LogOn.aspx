@@ -36,15 +36,21 @@
                 <fieldset>
                     <h5><%= GetGlobalResourceObject("LogOn", "HeaderAccountInformation").ToString()%></h5>
                     <hr />
-                    <div class="clearfix">
+                    <div class="clearfix" style="width:90%">
                         <%= Html.LabelFor(m => m.Email, GetGlobalResourceObject("LogOn", "Email").ToString()) %>
-                        <%: Html.TextBoxFor(m => m.Email, new Dictionary<string, object>() { {"required", "required" }, {"placeholder", "ol16*****" } })%>
+                        <%: Html.TextBoxFor(m => m.Email, new Dictionary<string, object>() { {"required", "required" }, {"placeholder", "ol16***** или st******" } })%>
+                        <br />
+                        <span style="display:block; float:right;">Студенты СПбГУ могут использовать свою учётную запись</span>
+                        <br />
+                        <br />
                         <%: Html.ValidationMessageFor(m => m.Email, GetGlobalResourceObject("LogOn", "EmailValidationMessage").ToString())%>
                     </div><br />
                     <div class="clearfix">
                         <%: Html.LabelFor(m => m.Password, GetGlobalResourceObject("LogOn", "Password").ToString())%>
-                        <%: Html.PasswordFor(m => m.Password) %><br />
-                        <a href="../../Account/ForgotPassword"><%= GetGlobalResourceObject("LogOn", "ForgotPassword").ToString()%></a><br />
+                        <%: Html.PasswordFor(m => m.Password) %>
+                        <br />
+                        <a href="../../Account/ForgotPassword"><%= GetGlobalResourceObject("LogOn", "ForgotPassword").ToString()%></a>
+                        <br />
                         <%: Html.ValidationMessageFor(m => m.Password, GetGlobalResourceObject("LogOn", "PasswordValidationMessage").ToString())%>
                     </div><br />
                     <div class="clearfix">

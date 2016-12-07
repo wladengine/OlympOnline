@@ -24,7 +24,7 @@ namespace OlympOnline.Controllers
 
             Guid UserId;
             if (Util.CheckAuthCookies(Request.Cookies, out UserId))
-                return RedirectToAction("Main", "Olymp");
+                return RedirectToAction("Main", "Applicant");
 
             Util.SetThreadCultureByCookies(Request.Cookies);
             if (Request.Cookies["sid"] == null || string.IsNullOrEmpty(Request.Cookies["sid"].Value))

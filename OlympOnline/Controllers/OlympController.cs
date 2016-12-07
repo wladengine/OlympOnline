@@ -48,7 +48,17 @@ namespace OlympOnline.Controllers
             //    .Select(x => new SelectListItem() { Text = x.Text, Value = x.Value.ToString() })
             //    .ToList();
 
-            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=@Year ORDER BY Subject";
+            string query = @"SELECT DISTINCT SubjectId, Subject 
+FROM extOlympiadInternet 
+INNER JOIN SchoolClass ON SchoolClass.SchoolTypeCategoryId = extOlympiadInternet.SchoolTypeCategoryId
+INNER JOIN Person ON Person.SchoolClassId = SchoolClass.Id
+WHERE extOlympiadInternet.Id NOT IN 
+(
+    SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId
+) 
+AND extOlympiadInternet.Year=@Year 
+AND Person.Id=@PersonId
+ORDER BY Subject";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@Year", Util.iOlympYear);
@@ -82,7 +92,7 @@ namespace OlympOnline.Controllers
             string sOlympFormId = Request.Form["hOlympForm"];
             string sSchoolClassInterval = Request.Form["hClass"];
 
-            string sTeacherName = Request.Form["teacherName"];
+            //string sTeacherName = Request.Form["teacherName"];
             //string sStageId = Request.Form["Stage"];
             //string sDate = Request.Form["Date"];
 
@@ -205,15 +215,15 @@ namespace OlympOnline.Controllers
 
             Util.AbitDB.ExecuteQuery(query, prms);
 
-            query = "INSERT INTO [Teachers] (PersonId, OlympiadId, Teacher) " +
-            "VALUES (@PersonId, @OlympiadId, @Teacher)";
-            prms = new Dictionary<string, object>()
-            {
-                { "@PersonId", PersonId },
-                { "@OlympiadId", OlympiadId },
-                { "@Teacher", sTeacherName }
-            };
-            Util.AbitDB.ExecuteQuery(query, prms);
+            //query = "INSERT INTO [Teachers] (PersonId, OlympiadId, Teacher) " +
+            //"VALUES (@PersonId, @OlympiadId, @Teacher)";
+            //prms = new Dictionary<string, object>()
+            //{
+            //    { "@PersonId", PersonId },
+            //    { "@OlympiadId", OlympiadId },
+            //    { "@Teacher", sTeacherName }
+            //};
+            //Util.AbitDB.ExecuteQuery(query, prms);
 
             query = "SELECT [BlackBoardCode] FROM [extOlympiadInternet] WHERE Id=@Id";
             dic.Clear();
@@ -388,42 +398,24 @@ namespace OlympOnline.Controllers
         }
 
         #region Ajax
-        //public JsonResult GetSubjects(string cityId)
-        //{
-        //    int iCityId;
-        //    if (!int.TryParse(cityId, out iCityId))
-        //        return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-        //    Guid PersonId;
-        //    if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
-        //        return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
-
-        //    string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND CityId=@CityId ORDER BY Subject";
-        //    Dictionary<string, object> dic = new Dictionary<string, object>();
-        //    dic.Add("@PersonId", PersonId);
-        //    dic.Add("@CityId", iCityId);
-        //    try
-        //    {
-        //        DataTable tbl = Util.AbitDB.GetDataTable(query, dic);
-
-        //        var lst = (from DataRow rw in tbl.Rows
-        //                   select new { Id = rw["SubjectId"].ToString(), Name = rw["Subject"].ToString() }).ToList();
-
-        //        return Json(new { IsOk = true, List = lst });
-        //    }
-        //    catch
-        //    {
-        //        return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
-        //    }
-        //}
-
+        
         public JsonResult GetSubjects()
         {
             Guid PersonId;
             if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
                 return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
 
-            string query = "SELECT DISTINCT SubjectId, Subject FROM extOlympiadInternet WHERE Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) AND Year=@Year ORDER BY Subject";
+            string query = @"SELECT DISTINCT SubjectId, Subject 
+FROM extOlympiadInternet 
+INNER JOIN SchoolClass ON SchoolClass.SchoolTypeCategoryId = extOlympiadInternet.SchoolTypeCategoryId
+INNER JOIN Person ON Person.SchoolClassId = SchoolClass.Id
+WHERE extOlympiadInternet.Id NOT IN 
+(
+    SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId
+) 
+AND extOlympiadInternet.Year=@Year 
+AND Person.Id=@PersonId
+ORDER BY Subject";
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("@PersonId", PersonId);
             dic.Add("@Year", Util.iOlympYear);
@@ -698,72 +690,7 @@ AND SchoolClassInSchoolClassInterval.SchoolClassId = (SELECT SchoolClassId FROM 
                 return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
             }
         }
-
-//        public JsonResult CheckInfo(string cityId, string subjectId, string stageId, string date, string placeId)
-//        {
-//            int iCityId;
-//            if (!int.TryParse(cityId, out iCityId))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-//            int iSubjectId;
-//            if (!int.TryParse(subjectId, out iSubjectId))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-//            int iStageId;
-//            if (!int.TryParse(stageId, out iStageId))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-//            DateTime dtDate;
-//            if (!DateTime.TryParse(date, CultureInfo.CreateSpecificCulture("ru-RU"), DateTimeStyles.None, out dtDate))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-//            int iOlympPlaceId;
-//            if (!int.TryParse(placeId, out iOlympPlaceId))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.IncorrectGUID });
-
-//            Guid PersonId;
-//            if (!Util.CheckAuthCookies(Request.Cookies, out PersonId))
-//                return Json(new { IsOk = false, ErrorMessage = Resources.ServerMessages.AuthorizationRequired });
-
-//            string query = @"SELECT City, Subject, convert(nvarchar, [Date], 104) AS 'Date', Stage, OlympPlace 
-//FROM extOlympiad WHERE extOlympiad.Id NOT IN (SELECT OlympiadId FROM [Application] WHERE PersonId=@PersonId) 
-//AND CityId=@CityId AND SubjectId=@SubjectId AND StageId=@StageId AND Date=@Date AND OlympPlaceId=@OlympPlaceId";
-//            Dictionary<string, object> dic = new Dictionary<string, object>();
-//            dic.Add("@PersonId", PersonId);
-//            dic.Add("@CityId", iCityId);
-//            dic.Add("@SubjectId", iSubjectId);
-//            dic.Add("@StageId", iStageId);
-//            dic.Add("@Date", dtDate.Date);
-//            dic.Add("@OlympPlaceId", iOlympPlaceId);
-
-//            try
-//            {
-//                DataTable tbl = Util.AbitDB.GetDataTable(query, dic);
-
-//                if (tbl.Rows.Count == 0)
-//                    return Json(new { IsOk = false, ErrorMessage = "Олимпиада не найдена или заявление уже подавалось" });
-//                if (tbl.Rows.Count == 2)
-//                    return Json(new { IsOk = false, ErrorMessage = "Ошибка: найдено более одной олимпиады" });
-
-//                DataRow rw = tbl.Rows[0];
-
-//                var data = new
-//                {
-//                    City = rw["City"].ToString(),
-//                    Subject = rw["Subject"].ToString(),
-//                    Date = rw["Date"].ToString(),
-//                    Stage = rw["Stage"].ToString(),
-//                    OlympPlace = rw["OlympPlace"].ToString()
-//                };
-
-//                return Json(new { IsOk = true, Vals = data });
-//            }
-//            catch
-//            {
-//                return Json(new { IsOk = false, ErrorMessage = "Ошибка при выполнении запроса. Попробуйте обновить страницу" });
-//            }
-//        }
-
+        
         public JsonResult CheckInfo(string subjectId, string olympFormId, string schoolClassInterval, string cityId)
         {
             int iSubjectId;
