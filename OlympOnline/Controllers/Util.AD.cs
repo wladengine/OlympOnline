@@ -54,13 +54,13 @@ namespace OlympOnline.Controllers
             string sName = usr.MiddleName;
             string sSecondName = usr.Name;
 
-            StudentIMService.Student stud = new StudentIMService.Student();
-            stud.Surname = sSurname;
-            stud.FirstName = sName;
-            stud.SecondName = sSecondName;
-            DateTime dtBirth = DateTime.Now;
-            if (DateTime.TryParse(sBirthDate, out dtBirth))
-                stud.Birthday = dtBirth.Date.ToShortDateString();
+            //StudentIMService.Student stud = new StudentIMService.Student();
+            //stud.Surname = sSurname;
+            //stud.FirstName = sName;
+            //stud.SecondName = sSecondName;
+            //DateTime dtBirth = DateTime.Now;
+            //if (DateTime.TryParse(sBirthDate, out dtBirth))
+            //    stud.Birthday = dtBirth.Date.ToShortDateString();
         }
 
         public static string GetUserEmailFromAD(string username)
